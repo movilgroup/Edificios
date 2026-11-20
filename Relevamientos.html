@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Relevamientos</title>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/0yX4db3M/logo-movil.png">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      background: #111;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: clamp(1rem, 5vw, 2rem);
+    }
+
+    main {
+      flex: 1;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      margin: 0 auto;
+      max-width: 42rem;
+      width: 100%;
+    }
+
+    .logo {
+      display: block;
+      height: auto;
+      margin-bottom: 27px;
+      max-width: 100%;
+      width: 132px;
+    }
+    .site-footer {
+      color: #bbb;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: auto;
+      padding-top: 28px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .site-footer a {
+      color: #ddd;
+      text-underline-offset: 3px;
+    }
+
+    .site-footer a:hover {
+      color: #fff;
+    }
+
+    .site-footer a:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
+
+    .legal-links {
+      margin: 0;
+    }
+
+    .legal-links span {
+      margin: 0 4px;
+    }
+
+    .copyright {
+      margin: 8px 0 0;
+    }
+
+    h1 {
+      color: #ccc;
+      font-size: 1.25rem;
+      font-weight: 400;
+      margin: 0 0 1.5rem;
+      text-align: center;
+    }
+
+    .button {
+      align-items: center;
+      background: #d72d32;
+      border-radius: 0.875rem;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      min-height: 3.25rem;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      width: 100%;
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: #e13a3f;
+    }
+
+    #survey-form {
+      display: grid;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .secondary-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    #register-survey { background: #218739; }
+    #register-survey:hover { background: #279c43; }
+    #menu-button { background: #666; }
+    #menu-button:hover { background: #777; }
+    #clear-form { background: #1769c2; }
+    #clear-form:hover { background: #207bdc; }
+
+    @media (max-width: 600px) {
+      .logo {
+        margin-bottom: 24px;
+        width: min(32vw, 120px);
+      }
+
+      body {
+      display: flex;
+      flex-direction: column;
+        padding:
+          max(1rem, env(safe-area-inset-top))
+          max(1rem, env(safe-area-inset-right))
+          max(1.5rem, env(safe-area-inset-bottom))
+          max(1rem, env(safe-area-inset-left));
+      }
+    }
+    /* Loader de entrada */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity .4s ease;
+    }
+
+    #loader[hidden] { display: none; }
+    #loader.is-finished { opacity: 0; pointer-events: none; }
+
+    .logo-loader {
+      position: relative;
+      width: min(180px, 60vw);
+      aspect-ratio: 1;
+    }
+
+    .logo-base,
+    .logo-fill img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-base { filter: grayscale(100%) brightness(0.5); }
+
+    .logo-fill {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      clip-path: inset(100% 0 0 0);
+    }
+
+    .logo-fill::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+      transform: translateX(-100%) rotate(25deg);
+    }
+
+    #loader.is-running .logo-fill {
+      animation: llenar 2.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
+
+    #loader.is-running .logo-fill::after {
+      animation: brillo 2.2s ease-in-out forwards;
+    }
+
+    @keyframes llenar {
+      from { clip-path: inset(100% 0 0 0); }
+      to { clip-path: inset(0 0 0 0); }
+    }
+
+    @keyframes brillo {
+      from { transform: translateX(-100%) rotate(25deg); }
+      to { transform: translateX(100%) rotate(25deg); }
+    }
+
+    .fade-in { animation: fadeIn .4s ease-in-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #loader { transition: none; }
+      #loader.is-running .logo-fill { animation-duration: .01s; }
+      #loader.is-running .logo-fill::after, .fade-in { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loader" role="status" aria-label="Cargando pantalla" hidden>
+    <div class="logo-loader" aria-hidden="true">
+      <img src="https://i.postimg.cc/prB8Q5s6/logo-claro.png" class="logo-base" alt="">
+      <div class="logo-fill">
+        <img src="https://i.postimg.cc/prB8Q5s6/logo-claro.png" alt="">
+      </div>
+    </div>
+  </div>
+  <main>
+    <img src="https://i.postimg.cc/prB8Q5s6/logo-claro.png" class="logo" alt="Claro">
+    <h1>Relevamientos</h1>
+    <form id="survey-form">
+      <button id="register-survey" class="button" type="button">Registrar Relevamiento</button>
+      <div class="secondary-actions">
+        <a id="menu-button" class="button" href="index.html">Menu</a>
+        <button id="clear-form" class="button" type="reset">Borrar Formulario</button>
+      </div>
+    </form>
+  <footer class="site-footer">
+    <p class="copyright">© MovilGroup 2026. Todos los derechos reservados.</p>
+  </footer>
+  </main>
+  <script>
+    document.getElementById("survey-form").addEventListener("reset", function () {
+      window.setTimeout(function () {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      });
+    });
+
+    (function () {
+      const loader = document.getElementById("loader");
+      const content = document.querySelector("main");
+      const logo = loader.querySelector(".logo-base");
+      const fill = loader.querySelector(".logo-fill");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let finished = false;
+      let started = false;
+      let fallback;
+
+      function finishLoader() {
+        if (finished) return;
+        finished = true;
+        window.clearTimeout(fallback);
+        loader.classList.add("is-finished");
+        content.inert = false;
+        content.removeAttribute("aria-busy");
+        content.classList.add("fade-in");
+        window.setTimeout(function () { loader.hidden = true; }, reducedMotion ? 0 : 400);
+      }
+
+      function startLoader() {
+        if (started || finished) return;
+        started = true;
+        if (!logo.naturalWidth) {
+          finishLoader();
+          return;
+        }
+        loader.classList.add("is-running");
+      }
+
+      loader.hidden = false;
+      content.inert = true;
+      content.setAttribute("aria-busy", "true");
+      fill.addEventListener("animationend", function (event) {
+        if (event.target === fill && event.animationName === "llenar") finishLoader();
+      });
+      logo.addEventListener("load", startLoader, { once: true });
+      logo.addEventListener("error", finishLoader, { once: true });
+      fallback = window.setTimeout(finishLoader, 6000);
+      if (logo.complete) startLoader();
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted) finishLoader();
+      });
+    })();
+  </script>
+</body>
+</html>

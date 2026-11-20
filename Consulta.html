@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Buscar edificio</title>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/0yX4db3M/logo-movil.png">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: clamp(1rem, 5vw, 2rem);
+    }
+
+    main {
+      margin: 0 auto;
+      max-width: 36rem;
+      width: 100%;
+    }
+
+    .page-header {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo {
+      display: block;
+      height: auto;
+      margin-bottom: 27px;
+      max-width: 100%;
+      width: 132px;
+    }
+
+    .site-footer {
+      color: #bbb;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: auto;
+      padding-top: 28px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .site-footer a {
+      color: #ddd;
+      text-underline-offset: 3px;
+    }
+
+    .site-footer a:hover {
+      color: #fff;
+    }
+
+    .site-footer a:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
+
+    .legal-links {
+      margin: 0;
+    }
+
+    .legal-links span {
+      margin: 0 4px;
+    }
+
+    .copyright {
+      margin: 8px 0 0;
+    }
+
+    h1 {
+      color: #ccc;
+      font-size: 18px;
+      font-weight: 400;
+      margin: 0;
+      text-align: center;
+    }
+
+    form {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    label {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    input,
+    select {
+      background: #1d1d1d;
+      border: 1px solid #555;
+      border-radius: 0.5rem;
+      color: #f5f5f5;
+      font: inherit;
+      padding: 0.65rem;
+      width: 100%;
+    }
+
+    fieldset {
+      border: 1px solid #444;
+      border-radius: 0.75rem;
+      display: grid;
+      gap: 1rem;
+      min-width: 0;
+      padding: 1rem;
+    }
+
+    .search-input-wrap {
+      display: flex;
+      position: relative;
+    }
+
+    .search-input-wrap.has-calendar #search-query {
+      border-radius: 0.5rem 0 0 0.5rem;
+      min-width: 0;
+    }
+
+    #search-calendar {
+      align-items: center;
+      border-radius: 0 0.5rem 0.5rem 0;
+      display: flex;
+      justify-content: center;
+      min-height: 0;
+      width: 3rem;
+      flex-shrink: 0;
+    }
+
+    #search-calendar[hidden] { display: none; }
+
+    #search-date-picker {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      border: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    button,
+    .button {
+      background: #d72d32;
+      border: 0;
+      border-radius: 0.875rem;
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      min-height: 3rem;
+      padding: 0.65rem 0.75rem;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    button:hover,
+    .button:hover {
+      background: #e13a3f;
+    }
+
+    #search-menu,
+    #tracking-menu,
+    #building-search-menu .button {
+      background: #666;
+    }
+
+    #search-menu:hover,
+    #tracking-menu:hover,
+    #building-search-menu .button:hover {
+      background: #777;
+    }
+
+    #building-search-menu .actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #building-search-menu .actions > .button {
+      grid-column: 1 / -1;
+    }
+
+    #search-by-next-visit {
+      grid-column: 1 / -1;
+    }
+
+    select.has-selection {
+      background: #d72d32;
+      border-color: #d72d32;
+      color: #fff;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.65;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    #building-search-form .actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #building-search-form[hidden],
+    #consulta-form[hidden] {
+      display: none;
+    }
+
+    #consultation-details[hidden] {
+      display: none;
+    }
+
+    #search-results ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #search-results li + li {
+      margin-top: 0.5rem;
+    }
+
+    .building-card {
+      background: #191919;
+      border: 1px solid #444;
+      border-radius: 0.75rem;
+      padding: 1rem;
+    }
+
+    .building-card h3,
+    .building-card p {
+      margin: 0 0 0.75rem;
+    }
+
+    .building-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .building-stats p {
+      background: #242424;
+      border-radius: 0.5rem;
+      margin: 0;
+      padding: 0.65rem 0.3rem;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .building-contacts {
+      border-top: 1px solid #383838;
+      padding-top: 0.85rem;
+      overflow-wrap: anywhere;
+    }
+
+    .building-contacts .saved-contact {
+      border-left: 2px solid #555;
+      padding-left: 0.65rem;
+    }
+
+    #search-results .building-card .actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .building-card .actions > button {
+      min-width: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    .building-card .actions > button:last-child {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: calc((100% - 0.75rem) / 2);
+    }
+
+    .building-card .edit-button { background: #d72d32; }
+    .building-card .edit-button:hover { background: #e13a3f; }
+    .building-card .follow-up-button { background: #218739; }
+    .building-card .follow-up-button:hover { background: #279c43; }
+    .building-card .technical-sheet-button { background: #1769c2; }
+    .building-card .technical-sheet-button:hover { background: #207bdc; }
+
+    dialog {
+      background: #191919;
+      border: 0;
+      border-radius: 0.875rem;
+      box-shadow: 0 0.5rem 2rem #0009;
+      color: #f5f5f5;
+      max-height: 85vh;
+      max-height: 85dvh;
+      max-width: 42rem;
+      overflow: auto;
+      padding: 1.5rem;
+      width: min(42rem, calc(100vw - 2rem));
+    }
+
+    dialog::backdrop {
+      background: #0008;
+    }
+
+    #tracking-confirmation {
+      border: 1px solid #414141;
+      border-top: 4px solid #d72d32;
+      max-width: 50rem;
+      width: min(50rem, calc(100vw - 2rem));
+    }
+    #tracking-confirmation-title {
+      color: #bbb;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      margin: 0 0 1rem;
+      text-align: left;
+      text-transform: uppercase;
+    }
+    #tracking-confirmation-building { border-bottom: 1px solid #444; font-size: 1.6rem; font-weight: 600; margin: 0; padding-bottom: 1.25rem; }
+    #tracking-changes { display: grid; gap: 0.4rem; margin: 1rem 0; overflow-wrap: anywhere; }
+    .tracking-change { display: grid; gap: 0.4rem; grid-template-columns: minmax(7rem, 0.8fr) minmax(0, 1.2fr); }
+    .tracking-change p { background: #252525; font-size: 0.85rem; line-height: 1.35; margin: 0; padding: 0.55rem 0.6rem; }
+    .tracking-change p:first-child { border-left: 3px solid #d72d32; border-radius: 0.4rem 0 0 0.4rem; color: #c9c9c9; font-size: 0.72rem; font-weight: 600; }
+    .tracking-change p:last-child { border-radius: 0 0.4rem 0.4rem 0; }
+    #tracking-confirmation .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; position: sticky; bottom: -1.5rem; background: #191919; border-top: 1px solid #363636; margin-top: 1.25rem; padding: 1rem 0; }
+    #tracking-confirmation .actions button { font-size: 0.82rem; line-height: 1.2; min-height: 3rem; padding: 0.6rem 0.45rem; }
+    #confirm-tracking { background: #218739; }
+    #confirm-tracking:hover { background: #279c43; }
+    #edit-tracking { background: #d72d32; }
+    #edit-tracking:hover { background: #e13a3f; }
+
+    #technical-sheet-content {
+      display: grid;
+      gap: 1rem;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    #technical-sheet-dialog {
+      border: 1px solid #414141;
+      border-top: 4px solid #d72d32;
+      width: min(50rem, calc(100vw - 2rem));
+      max-width: 50rem;
+    }
+
+    #technical-sheet-title {
+      color: #bbb;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 1rem;
+    }
+
+    .sheet-heading {
+      border-bottom: 1px solid #444;
+      padding-bottom: 1.25rem;
+    }
+
+    .sheet-heading h3 { font-size: 1.6rem; margin: 0 0 0.5rem; }
+    .sheet-heading p { color: #bbb; line-height: 1.5; margin: 0; }
+    .sheet-section {
+      background: #202020;
+      border: 1px solid #363636;
+      border-radius: 0.75rem;
+      padding: 1rem;
+    }
+    .sheet-section h3 { font-size: 1rem; margin: 0 0 1rem; }
+    .sheet-contact-list { display: grid; gap: 0.85rem; }
+    .sheet-contact-card {
+      background: #191919;
+      border: 1px solid #444;
+      border-radius: 0.65rem;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      padding: 1rem;
+    }
+    .sheet-contact-card h4 { color: #ddd; font-size: 0.9rem; margin: 0 0 0.85rem; }
+    .sheet-section dl {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem 1.5rem;
+      margin: 0;
+    }
+    .sheet-section dt {
+      color: #aaa;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      margin-bottom: 0.35rem;
+    }
+
+    .sheet-section.sheet-general dl {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .sheet-section.sheet-state dl {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .sheet-state .sheet-full { grid-column: 1 / -1; }
+    .sheet-general dl > div { grid-column: span 3; }
+    .sheet-general dl > .sheet-stat { grid-column: span 2; }
+    .sheet-general dl > .sheet-full { grid-column: 1 / -1; }
+    .sheet-stat dd { font-size: 1.25rem; font-weight: bold; }
+    .sheet-visits {
+      border-top: 1px solid #414141;
+      padding-top: 1rem;
+    }
+
+    #technical-sheet-content dd {
+      margin: 0;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    .sheet-value-yes, .sheet-value-no {
+      display: inline-block;
+      padding: 0.15rem 0.65rem;
+      border-radius: 0.35rem;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+    .sheet-value-yes { background: #173d27; color: #a6e3b8; }
+    .sheet-value-no { background: #3a2b2b; color: #efb7b7; }
+    .sheet-follow-up-value { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .sheet-modified-at { color: #bbb; font-size: 0.75rem; }
+    #technical-sheet-status:empty { display: none; }
+    #technical-sheet-dialog > .actions {
+      position: sticky;
+      bottom: -1.5rem;
+      background: #191919;
+      border-top: 1px solid #363636;
+      justify-content: flex-end;
+      margin-top: 1.25rem;
+      padding: 1rem 0;
+    }
+
+    #registration-success {
+      transform: scale(0.75);
+      background: #176b35;
+      border: 1px solid #55b879;
+      border-top: 1px solid #55b879;
+      color: #fff;
+      max-width: 24rem;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+    #registration-success h2 { color: #fff; font-size: 1.5rem; margin: 1rem 0 0; }
+    #registration-success svg { display: block; margin: 0 auto; }
+
+    #status {
+      min-height: 1.5em;
+    }
+
+    @media (max-width: 36rem) {
+      body {
+        padding:
+          max(1rem, env(safe-area-inset-top))
+          max(1rem, env(safe-area-inset-right))
+          max(1.5rem, env(safe-area-inset-bottom))
+          max(1rem, env(safe-area-inset-left));
+      }
+
+      .actions > button,
+      .actions > .button {
+        flex: 1 1 100%;
+      }
+
+      .building-card {
+        padding: 0.75rem;
+      }
+
+      dialog {
+        max-height: calc(100vh - 2rem);
+        max-height: calc(100dvh - 2rem);
+        padding: 1rem;
+      }
+
+      .sheet-section dl {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.85rem;
+      }
+
+      #technical-sheet-dialog > .actions { bottom: -1rem; }
+
+    }
+    @media (max-width: 600px) {
+      .logo {
+        margin-bottom: 24px;
+        width: min(32vw, 120px);
+      }
+    }
+    /* Loader de entrada */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity .4s ease;
+    }
+
+    #loader[hidden] { display: none; }
+    #loader.is-finished { opacity: 0; pointer-events: none; }
+
+    .logo-loader {
+      position: relative;
+      width: min(180px, 60vw);
+      aspect-ratio: 1;
+    }
+
+    .logo-base,
+    .logo-fill img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-base { filter: grayscale(100%) brightness(0.5); }
+
+    .logo-fill {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      clip-path: inset(100% 0 0 0);
+    }
+
+    .logo-fill::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+      transform: translateX(-100%) rotate(25deg);
+    }
+
+    #loader.is-running .logo-fill {
+      animation: llenar 2.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
+
+    #loader.is-running .logo-fill::after {
+      animation: brillo 2.2s ease-in-out forwards;
+    }
+
+    #loader.is-searching .logo-fill,
+    #loader.is-searching .logo-fill::after {
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes llenar {
+      from { clip-path: inset(100% 0 0 0); }
+      to { clip-path: inset(0 0 0 0); }
+    }
+
+    @keyframes brillo {
+      from { transform: translateX(-100%) rotate(25deg); }
+      to { transform: translateX(100%) rotate(25deg); }
+    }
+
+    .fade-in { animation: fadeIn .4s ease-in-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #loader { transition: none; }
+      #loader.is-running .logo-fill { animation-duration: .01s; }
+      #loader.is-running .logo-fill::after, .fade-in { animation: none; }
+      #loader.is-searching .logo-fill {
+        animation: none;
+        clip-path: inset(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="loader" role="status" aria-label="Cargando pantalla" hidden>
+    <div class="logo-loader" aria-hidden="true">
+      <img src="https://i.postimg.cc/prB8Q5s6/logo-claro.png" class="logo-base" alt="">
+      <div class="logo-fill">
+        <img src="https://i.postimg.cc/prB8Q5s6/logo-claro.png" alt="">
+      </div>
+    </div>
+  </div>
+  <main>
+    <header class="page-header">
+      <img src="https://i.postimg.cc/prB8Q5s6/logo-claro.png" class="logo" alt="Claro">
+      <h1>Buscar edificio</h1>
+    </header>
+    <section id="building-search-menu" aria-label="Opciones de búsqueda">
+      <div class="actions">
+        <button id="search-by-name" type="button">Nombre</button>
+        <button id="search-by-address" type="button">Dirección</button>
+        <button id="search-by-next-visit" type="button">Próxima Visita</button>
+        <a class="button" href="index.html">Menu</a>
+      </div>
+    </section>
+
+    <form id="building-search-form" method="get" target="search-response" hidden>
+      <input type="hidden" name="action" value="buscarEdificios">
+      <input id="search-criterion" name="criterio" type="hidden">
+      <input id="search-value" name="busqueda" type="hidden">
+      <label for="search-query">
+        <span id="search-label">Buscar</span>
+      </label>
+      <div class="search-input-wrap">
+        <input id="search-query" type="search" autocomplete="off" required>
+        <button id="search-calendar" type="button" aria-label="Seleccionar fecha en el calendario" hidden>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+            <path d="M16 3v4M8 3v4M3 11h18M8 15h2M14 15h2"></path>
+          </svg>
+        </button>
+        <input id="search-date-picker" type="date" tabindex="-1" aria-label="Calendario de próxima visita" hidden>
+      </div>
+      <div class="actions">
+        <button id="search-submit" type="submit">Buscar</button>
+        <button id="search-menu" type="button">Menu</button>
+      </div>
+      <p id="search-status" role="status" aria-live="polite"></p>
+      <div id="search-results"></div>
+    </form>
+
+    <form id="consulta-form" method="post" target="consulta-response" hidden>
+      <input type="hidden" name="action" value="consulta">
+      <input id="id-edificio" name="idEdificio" type="hidden">
+
+      <fieldset id="consultation-details" disabled hidden>
+        <legend id="tracking-building-name">Edificio</legend>
+        <label for="nota-autorizacion">NOTA DE AUTORIZACIÓN</label>
+        <select id="nota-autorizacion" name="notaAutorizacion" data-follow-up required>
+          <option value="">Seleccionar</option>
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+
+        <label for="relevamiento-tecnica">RELEVAMIENTO TÉCNICA</label>
+        <select id="relevamiento-tecnica" name="relevamientoTecnica" data-follow-up required>
+          <option value="">Seleccionar</option>
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+
+        <label for="instalacion-caja">INSTALACIÓN DE CAJA</label>
+        <select id="instalacion-caja" name="instalacionCaja" data-follow-up required>
+          <option value="">Seleccionar</option>
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+
+        <label for="permisos-acciones">PERMISOS ACCIONES</label>
+        <select id="permisos-acciones" name="permisosAcciones" data-follow-up required>
+          <option value="">Seleccionar</option>
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+
+        <label for="acciones-comerciales">ACCIONES COMERCIALES</label>
+        <select id="acciones-comerciales" name="accionesComerciales" data-follow-up required>
+          <option value="">Seleccionar</option>
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+
+        <label for="ventas">VENTAS</label>
+        <select id="ventas" name="ventas" data-follow-up required>
+          <option value="">Seleccionar</option>
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+
+        <button id="submit-button" type="submit">Confirmar Acción</button>
+        <button id="tracking-menu" type="button">Menu</button>
+      </fieldset>
+
+    </form>
+    <dialog id="tracking-confirmation" aria-labelledby="tracking-confirmation-title">
+      <h2 id="tracking-confirmation-title">Confirmar cambios</h2>
+      <p id="tracking-confirmation-building"></p>
+      <div id="tracking-changes"></div>
+      <div class="actions">
+        <button id="confirm-tracking" type="button">Confirmar</button>
+        <button id="edit-tracking" type="button">Editar</button>
+      </div>
+    </dialog>
+    <dialog id="technical-sheet-dialog" aria-labelledby="technical-sheet-title">
+      <h2 id="technical-sheet-title">Ficha técnica</h2>
+      <div id="technical-sheet-content"></div>
+      <p id="technical-sheet-status" role="status" aria-live="polite"></p>
+      <div class="actions">
+        <button id="close-technical-sheet" type="button">Cerrar</button>
+      </div>
+    </dialog>
+    <dialog id="registration-success" aria-labelledby="registration-success-title">
+      <svg aria-hidden="true" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="m7 12 3 3 7-7"/></svg>
+      <h2 id="registration-success-title">Registro exitoso</h2>
+    </dialog>
+    <p id="status" role="status" aria-live="polite"></p>
+
+    <iframe name="consulta-response" title="Respuesta del envío" hidden></iframe>
+    <iframe name="search-response" title="Respuesta de búsqueda" hidden></iframe>
+    <iframe name="technical-sheet-response" title="Ficha técnica" hidden></iframe>
+    <form id="technical-sheet-form" method="get" target="technical-sheet-response" hidden>
+      <input type="hidden" name="action" value="obtenerFichaTecnica">
+      <input id="technical-sheet-building-id" name="idEdificio" type="hidden">
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <p class="copyright">© MovilGroup 2026. Todos los derechos reservados.</p>
+  </footer>
+  <script>
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoJu17H-UPp-ZW_XcjPW1RT6vArcSJi5l5m60G6Hr_dQGjPT5OKSLIHu5hyFueTR5d/exec";
+    const buildingSearchMenu = document.getElementById("building-search-menu");
+    const searchForm = document.getElementById("building-search-form");
+    const searchFrame = document.querySelector('iframe[name="search-response"]');
+    const searchCriterion = document.getElementById("search-criterion");
+    const searchQuery = document.getElementById("search-query");
+    const searchValue = document.getElementById("search-value");
+    const searchCalendar = document.getElementById("search-calendar");
+    const searchDatePicker = document.getElementById("search-date-picker");
+    const searchLabel = document.getElementById("search-label");
+    const searchStatus = document.getElementById("search-status");
+    const searchResults = document.getElementById("search-results");
+    const searchSubmitButton = document.getElementById("search-submit");
+    const searchMenuButton = document.getElementById("search-menu");
+    const searchModeButtons = [
+      document.getElementById("search-by-name"),
+      document.getElementById("search-by-address"),
+      document.getElementById("search-by-next-visit")
+    ];
+    const form = document.getElementById("consulta-form");
+    const frame = document.querySelector('iframe[name="consulta-response"]');
+    const buildingIdInput = document.getElementById("id-edificio");
+    const consultationDetails = document.getElementById("consultation-details");
+    const followUpFields = Array.from(document.querySelectorAll("[data-follow-up]"));
+    const submitButton = document.getElementById("submit-button");
+    const trackingMenuButton = document.getElementById("tracking-menu");
+    const trackingConfirmation = document.getElementById("tracking-confirmation");
+    const trackingChanges = document.getElementById("tracking-changes");
+    const confirmTrackingButton = document.getElementById("confirm-tracking");
+    let originalFollowUp = {};
+    let trackingSaving = false;
+    const status = document.getElementById("status");
+    const technicalSheetForm = document.getElementById("technical-sheet-form");
+    const technicalSheetIdInput = document.getElementById("technical-sheet-building-id");
+    const technicalSheetFrame = document.querySelector('iframe[name="technical-sheet-response"]');
+    const technicalSheetDialog = document.getElementById("technical-sheet-dialog");
+    const technicalSheetContent = document.getElementById("technical-sheet-content");
+    const technicalSheetStatus = document.getElementById("technical-sheet-status");
+    let responseTimeout;
+    let searchResponseTimeout;
+    let technicalSheetResponseTimeout;
+    let preserveStatusAfterReset = false;
+
+    function isResponseFromFrame(event, targetFrame) {
+      let source = event.source;
+      while (source && source !== targetFrame.contentWindow) {
+        const parent = source.parent;
+        if (parent === source) {
+          return false;
+        }
+        source = parent;
+      }
+      return source === targetFrame.contentWindow;
+    }
+
+    function openBuildingSearch(criterion, label) {
+      buildingSearchMenu.hidden = true;
+      searchCriterion.value = criterion;
+      searchLabel.textContent = "Buscar por " + label.toLowerCase();
+      searchQuery.value = "";
+      const isVisitSearch = criterion === "fechaProximaVisita";
+      searchQuery.type = isVisitSearch ? "text" : "search";
+      searchQuery.placeholder = isVisitSearch ? "dd/mm/aaaa" : "";
+      searchQuery.inputMode = isVisitSearch ? "numeric" : "search";
+      searchQuery.setCustomValidity("");
+      searchCalendar.hidden = !isVisitSearch;
+      searchDatePicker.hidden = !isVisitSearch;
+      searchDatePicker.value = "";
+      searchQuery.parentElement.classList.toggle("has-calendar", isVisitSearch);
+      searchStatus.textContent = "";
+      searchResults.replaceChildren();
+      searchForm.hidden = false;
+      form.hidden = true;
+      searchQuery.focus();
+    }
+
+    function returnToBuildingMenu() {
+      buildingSearchMenu.hidden = false;
+      searchForm.hidden = true;
+      searchQuery.value = "";
+      searchStatus.textContent = "";
+      searchResults.replaceChildren();
+      form.reset();
+    }
+
+    function setSearchPending(isPending) {
+      if (isPending) {
+        window.pageLoader.showSearch();
+      } else {
+        window.pageLoader.hideSearch();
+      }
+      searchSubmitButton.disabled = isPending;
+      searchMenuButton.disabled = isPending;
+      searchModeButtons.forEach(function (button) {
+        button.disabled = isPending;
+      });
+    }
+
+    function updateFollowUpFields() {
+      let previousAnswered = true;
+      followUpFields.forEach(function (field, index) {
+        field.required = index === 0;
+        field.disabled = !previousAnswered;
+        if (field.disabled) field.value = "";
+        field.classList.toggle("has-selection", Boolean(field.value));
+        previousAnswered = previousAnswered && Boolean(field.value);
+      });
+    }
+
+    followUpFields.forEach(function (field) {
+      field.addEventListener("change", updateFollowUpFields);
+    });
+
+    function renderTechnicalSheet(record) {
+      technicalSheetContent.replaceChildren();
+      const heading = document.createElement("header");
+      heading.className = "sheet-heading";
+      const name = document.createElement("h3");
+      name.textContent = record.nombreEdificio || "Edificio";
+      const address = document.createElement("p");
+      address.textContent = record.direccion || "Dirección sin informar";
+      heading.append(name, address);
+      technicalSheetContent.append(heading);
+
+      const sections = [
+        ["Datos generales", [
+          ["Vendedor", "vendedor"], ["Fecha de registro", "fecha"],
+          ["Tipo de Proyecto", "tipoProyecto"],
+          ["Coordenadas", "coordenadas"], ["Torres", "torres"],
+          ["Pisos", "pisos"], ["Lotes", "lotes"],
+          ["Cantidad de visitas", "cantidadVisitas"]
+        ]],
+        ["Contactos", [
+          ["Administrador", "administrador"], ["Cargo", "cargo"],
+          ["Teléfono", "telefono"], ["Correo", "correo"]
+        ]],
+        ["Competencia", [
+          ["Presencia de competencia", "presenciaCompetencia"], ["Empresa", "empresa"],
+          ["Promoción de la competencia", "promocionCompetencia"]
+        ]],
+        ["Estado", [
+          ["¿Está cableado?", "cableado"], ["¿Es punto bonificado?", "puntoBonificado"],
+          ["¿Qué gestión se realizó?", "gestionRealizada"],
+          ["Pisos de la caja", "pisoCaja"], ["Puertos libres", "puertosLibres"],
+          ["Acrónimo", "acronimo"], ["Acrónimo de la caja", "acronimoTexto"]
+        ]],
+        ["Seguimiento", [
+          ["Nota de autorización", "notaAutorizacion"], ["Relevamiento técnico", "relevamientoTecnica"],
+          ["Instalación de caja", "instalacionCaja"], ["Permisos de acciones", "permisosAcciones"],
+          ["Acciones comerciales", "accionesComerciales"], ["Ventas", "ventas"]
+        ]],
+        ["Observaciones", [["Registro inicial", "observaciones"], ["Edición", "observacionesEdicion"]]]
+      ];
+
+      sections.forEach(function (sectionData, sectionIndex) {
+        const section = document.createElement("section");
+        section.className = "sheet-section" + (sectionIndex === 0 ? " sheet-general" : "");
+        if (sectionData[0] === "Estado") section.classList.add("sheet-state");
+        const title = document.createElement("h3");
+        title.textContent = sectionData[0];
+        if (sectionData[0] === "Contactos") {
+          const contactColumns = sectionData[1].map(function (field) {
+            return String(record[field[1]] || "").split(/\r?\n/);
+          });
+          const contactCount = Math.max.apply(null, contactColumns.map(function (values) { return values.length; }));
+          const contactList = document.createElement("div");
+          contactList.className = "sheet-contact-list";
+          for (let index = 0; index < contactCount; index += 1) {
+            const values = contactColumns.map(function (column) { return (column[index] || "").trim(); });
+            if (!values.some(Boolean)) continue;
+            const card = document.createElement("article");
+            card.className = "sheet-contact-card";
+            const contactTitle = document.createElement("h4");
+            contactTitle.textContent = "Contacto " + (contactList.children.length + 1);
+            const contactDetails = document.createElement("dl");
+            sectionData[1].forEach(function (field, fieldIndex) {
+              const entry = document.createElement("div");
+              const term = document.createElement("dt");
+              const description = document.createElement("dd");
+              term.textContent = fieldIndex === 0 ? "Nombre y Apellido" : field[0];
+              description.textContent = values[fieldIndex] || "—";
+              entry.append(term, description);
+              contactDetails.append(entry);
+            });
+            card.append(contactTitle, contactDetails);
+            contactList.append(card);
+          }
+          if (!contactList.children.length) {
+            const empty = document.createElement("p");
+            empty.textContent = "Sin contactos guardados";
+            contactList.append(empty);
+          }
+          section.append(title, contactList);
+          technicalSheetContent.append(section);
+          return;
+        }
+        const details = document.createElement("dl");
+        sectionData[1].forEach(function (field) {
+          const entry = document.createElement("div");
+          if (["torres", "pisos", "lotes"].includes(field[1])) entry.className = "sheet-stat";
+          if (["vendedor", "fecha", "coordenadas"].includes(field[1])) entry.className = "sheet-full";
+          if (field[1] === "cantidadVisitas") entry.className = "sheet-full sheet-visits";
+          if (sectionData[0] === "Estado" && field[1] === "gestionRealizada") entry.className = "sheet-full";
+          const term = document.createElement("dt");
+          const description = document.createElement("dd");
+          term.textContent = field[0];
+          const value = record[field[1]];
+          if (value === "Si" || value === "No") {
+            const badge = document.createElement("span");
+            badge.className = value === "Si" ? "sheet-value-yes" : "sheet-value-no";
+            badge.textContent = value === "Si" ? "Sí" : "No";
+            description.append(badge);
+          } else {
+            description.textContent = value === undefined || value === null || value === "" ? "—" : String(value);
+          }
+          if (sectionData[0] === "Seguimiento") {
+            description.className = "sheet-follow-up-value";
+            const modifiedAt = document.createElement("span");
+            modifiedAt.className = "sheet-modified-at";
+            modifiedAt.textContent = record[field[1] + "Modificado"] || "Sin fecha registrada";
+            modifiedAt.title = "Última modificación";
+            description.append(modifiedAt);
+          }
+          entry.append(term, description);
+          details.append(entry);
+        });
+        section.append(title, details);
+        technicalSheetContent.append(section);
+      });
+    }
+    function openTechnicalSheet(building) {
+      technicalSheetContent.replaceChildren();
+      technicalSheetStatus.textContent = "Cargando ficha técnica...";
+      window.pageLoader.showSearch("Cargando ficha técnica");
+      technicalSheetForm.action = GOOGLE_APPS_SCRIPT_URL;
+      technicalSheetIdInput.value = String(building.id);
+      technicalSheetResponseTimeout = window.setTimeout(function () {
+        window.pageLoader.hideSearch();
+        technicalSheetStatus.textContent = "No llegó respuesta al cargar la ficha técnica.";
+        if (!technicalSheetDialog.open) technicalSheetDialog.showModal();
+      }, 20000);
+      technicalSheetForm.submit();
+    }
+
+    function renderSearchResults(results) {
+      searchResults.replaceChildren();
+      if (!Array.isArray(results) || !results.length) {
+        return;
+      }
+
+      const list = document.createElement("ul");
+      results.forEach(function (building) {
+        const item = document.createElement("li");
+        const card = document.createElement("article");
+        card.className = "building-card";
+        const heading = document.createElement("h3");
+        heading.textContent = "Nombre Edificio: " + (building.nombre || "Edificio");
+        const address = document.createElement("p");
+        address.textContent = "Dirección: " + (building.direccion || "—");
+        const towers = document.createElement("p");
+        towers.textContent = "Torres: " + (building.torres ?? "—");
+        const floors = document.createElement("p");
+        floors.textContent = "Piso: " + (building.pisos ?? "—");
+        const lots = document.createElement("p");
+        lots.textContent = "Depto: " + (building.deptos ?? building.lotes ?? "—");
+        const stats = document.createElement("div");
+        stats.className = "building-stats";
+        stats.append(towers, floors, lots);
+        const contacts = document.createElement("section");
+        contacts.className = "building-contacts";
+        const contactsTitle = document.createElement("p");
+        contactsTitle.textContent = "Contactos guardados";
+        contacts.append(contactsTitle);
+        const savedContacts = Array.isArray(building.contactos) ? building.contactos : [];
+        if (!savedContacts.length) {
+          const empty = document.createElement("p");
+          empty.textContent = "Sin contactos guardados";
+          contacts.append(empty);
+        }
+        savedContacts.forEach(function (contact, index) {
+          const entry = document.createElement("div");
+          entry.className = "saved-contact";
+          const name = document.createElement("p");
+          name.textContent = [contact.nombre || "Contacto " + (index + 1), contact.cargo].filter(Boolean).join(" · ");
+          entry.append(name);
+          [["Teléfono", contact.telefono], ["Correo", contact.correo]].forEach(function (field) {
+            if (!field[1]) return;
+            const detail = document.createElement("p");
+            detail.textContent = field[0] + ": " + field[1];
+            entry.append(detail);
+          });
+          contacts.append(entry);
+        });
+        const nextVisit = document.createElement("p");
+        const visitDate = String(building.fechaProximaVisita || "");
+        nextVisit.textContent = "Fecha próxima visita: " + (visitDate
+          ? (/^\d{4}-\d{2}-\d{2}$/.test(visitDate) ? visitDate.split("-").reverse().join("/") : visitDate)
+          : "Sin programar");
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "edit-button";
+        editButton.textContent = "Editar";
+        editButton.addEventListener("click", function () {
+          window.location.href = "EdificioNuevo.html?editar=" + encodeURIComponent(building.id) +
+            "&nombre=" + encodeURIComponent(building.nombre || "");
+        });
+
+        const followUpButton = document.createElement("button");
+        followUpButton.type = "button";
+        followUpButton.className = "follow-up-button";
+        followUpButton.textContent = "Seguimiento";
+        followUpButton.addEventListener("click", function () {
+          document.title = "Seguimiento";
+          document.querySelector(".page-header h1").textContent = "Seguimiento";
+          document.getElementById("tracking-building-name").textContent = building.nombre || "Edificio";
+          buildingIdInput.value = String(building.id);
+          followUpFields.forEach(function (field) {
+            field.value = building[field.name] || "";
+            originalFollowUp[field.name] = field.value;
+            field.classList.toggle("has-selection", Boolean(field.value));
+          });
+          buildingSearchMenu.hidden = true;
+          searchForm.hidden = true;
+          form.hidden = false;
+          consultationDetails.hidden = false;
+          consultationDetails.disabled = false;
+          updateFollowUpFields();
+          searchForm.hidden = true;
+          searchStatus.textContent = "";
+          searchResults.replaceChildren();
+          const nextStage = followUpFields.find(function (field) {
+            return !field.disabled && !field.value;
+          });
+          (nextStage || followUpFields[0]).focus();
+        });
+
+        const technicalSheetButton = document.createElement("button");
+        technicalSheetButton.type = "button";
+        technicalSheetButton.className = "technical-sheet-button";
+        technicalSheetButton.textContent = "Ficha técnica";
+        technicalSheetButton.addEventListener("click", function () {
+          openTechnicalSheet(building);
+        });
+
+        actions.append(editButton, followUpButton, technicalSheetButton);
+        card.append(heading, address, stats, contacts, nextVisit, actions);
+        item.append(card);
+        list.append(item);
+      });
+      searchResults.append(list);
+    }
+
+    searchModeButtons[0].addEventListener("click", function () {
+      openBuildingSearch("nombre", "nombre del edificio");
+    });
+    searchModeButtons[1].addEventListener("click", function () {
+      openBuildingSearch("direccion", "dirección");
+    });
+    searchModeButtons[2].addEventListener("click", function () {
+      openBuildingSearch("fechaProximaVisita", "fecha próxima visita");
+    });
+
+    function getVisitSearchDate() {
+      const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(searchQuery.value.trim());
+      if (!match) return "";
+      const isoDate = match[3] + "-" + match[2] + "-" + match[1];
+      const date = new Date(isoDate + "T00:00:00Z");
+      return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === isoDate ? isoDate : "";
+    }
+
+    searchQuery.addEventListener("input", function () {
+      if (searchCriterion.value === "fechaProximaVisita") {
+        const cursorDigits = searchQuery.value.slice(0, searchQuery.selectionStart).replace(/\D/g, "").length;
+        const digits = searchQuery.value.replace(/\D/g, "").slice(0, 8);
+        searchQuery.value = digits.slice(0, 2) + (digits.length > 2 ? "/" + digits.slice(2, 4) : "") +
+          (digits.length > 4 ? "/" + digits.slice(4) : "");
+        const cursor = Math.min(searchQuery.value.length, cursorDigits + (cursorDigits > 2 ? 1 : 0) + (cursorDigits > 4 ? 1 : 0));
+        searchQuery.setSelectionRange(cursor, cursor);
+      }
+      searchQuery.setCustomValidity("");
+    });
+    searchCalendar.addEventListener("click", function () {
+      searchDatePicker.value = getVisitSearchDate();
+      if (typeof searchDatePicker.showPicker === "function") {
+        searchDatePicker.showPicker();
+      } else {
+        searchDatePicker.focus();
+        searchDatePicker.click();
+      }
+    });
+    searchDatePicker.addEventListener("change", function () {
+      if (!searchDatePicker.value) return;
+      searchQuery.value = searchDatePicker.value.split("-").reverse().join("/");
+      searchQuery.setCustomValidity("");
+      searchQuery.focus();
+    });
+
+    searchMenuButton.addEventListener("click", returnToBuildingMenu);
+    trackingMenuButton.addEventListener("click", function () {
+      returnToBuildingMenu();
+    });
+    document.getElementById("close-technical-sheet").addEventListener("click", function () {
+      technicalSheetDialog.close();
+    });
+    technicalSheetDialog.addEventListener("close", function () {
+      window.clearTimeout(technicalSheetResponseTimeout);
+    });
+
+    searchForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const isVisitSearch = searchCriterion.value === "fechaProximaVisita";
+      searchValue.value = isVisitSearch ? getVisitSearchDate() : searchQuery.value;
+      searchQuery.setCustomValidity(isVisitSearch && !searchValue.value
+        ? "Ingresá una fecha válida en formato dd/mm/aaaa." : "");
+      if (!searchForm.reportValidity()) {
+        return;
+      }
+
+      if (!/^https:\/\/script\.google\.com\/macros\/s\/.+\/(exec|dev)$/.test(GOOGLE_APPS_SCRIPT_URL)) {
+        searchStatus.textContent = "Falta configurar la URL del formulario de Google Apps Script.";
+        return;
+      }
+
+      searchForm.action = GOOGLE_APPS_SCRIPT_URL;
+      searchResults.replaceChildren();
+      setSearchPending(true);
+      searchStatus.textContent = "Buscando edificios...";
+      searchResponseTimeout = window.setTimeout(function () {
+        setSearchPending(false);
+        searchStatus.textContent = "No llegó respuesta de la búsqueda. Intentá nuevamente.";
+      }, 20000);
+      searchForm.submit();
+    });
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (trackingSaving) return;
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      const changedFields = followUpFields.filter(function (field) {
+        return field.value !== (originalFollowUp[field.name] || "");
+      });
+      if (!changedFields.length) {
+        status.textContent = "No hay cambios de seguimiento para guardar.";
+        return;
+      }
+      trackingChanges.replaceChildren();
+      document.getElementById("tracking-confirmation-building").textContent =
+        document.getElementById("tracking-building-name").textContent;
+      changedFields.forEach(function (field) {
+        const change = document.createElement("div");
+        change.className = "tracking-change";
+        const label = document.createElement("p");
+        label.textContent = document.querySelector('label[for="' + field.id + '"]').textContent;
+        const after = document.createElement("p");
+        after.textContent = "Nuevo Estado: " + (field.value || "Sin responder");
+        change.append(label, after);
+        trackingChanges.append(change);
+      });
+      status.textContent = "";
+      trackingConfirmation.showModal();
+    });
+
+    document.getElementById("edit-tracking").addEventListener("click", function () {
+      trackingConfirmation.close();
+      const changedField = followUpFields.find(function (field) {
+        return !field.disabled && field.value !== (originalFollowUp[field.name] || "");
+      });
+      if (changedField) changedField.focus();
+    });
+
+    confirmTrackingButton.addEventListener("click", function () {
+      if (trackingSaving || !trackingConfirmation.open || !form.reportValidity()) return;
+
+      if (!/^https:\/\/script\.google\.com\/macros\/s\/.+\/(exec|dev)$/.test(GOOGLE_APPS_SCRIPT_URL)) {
+        status.textContent = "Falta configurar la URL del formulario de Google Apps Script.";
+        return;
+      }
+
+      form.action = GOOGLE_APPS_SCRIPT_URL;
+      trackingSaving = true;
+      confirmTrackingButton.disabled = true;
+      trackingConfirmation.close();
+      submitButton.disabled = true;
+      trackingMenuButton.disabled = true;
+      window.pageLoader.showSearch("Guardando seguimiento");
+      status.textContent = "Guardando consulta...";
+      responseTimeout = window.setTimeout(function () {
+        trackingSaving = false;
+        confirmTrackingButton.disabled = false;
+        submitButton.disabled = false;
+        trackingMenuButton.disabled = false;
+        window.pageLoader.hideSearch();
+        status.textContent = "No llegó confirmación. La consulta podría haberse guardado; revisá la planilla antes de reintentar.";
+      }, 20000);
+      form.submit();
+    });
+
+    form.addEventListener("reset", function () {
+      const preserveStatus = preserveStatusAfterReset;
+      preserveStatusAfterReset = false;
+      window.setTimeout(function () {
+        if (!preserveStatus) {
+          status.textContent = "";
+        }
+        consultationDetails.hidden = true;
+        consultationDetails.disabled = true;
+        form.hidden = true;
+        searchForm.hidden = true;
+        buildingSearchMenu.hidden = false;
+        document.title = "Buscar edificio";
+        document.querySelector(".page-header h1").textContent = "Buscar edificio";
+        followUpFields.forEach(function (field) {
+          field.classList.remove("has-selection");
+        });
+      });
+    });
+
+    window.addEventListener("message", function (event) {
+      if (isResponseFromFrame(event, technicalSheetFrame) &&
+          event.data &&
+          event.data.type === "edificio-technical-sheet") {
+        window.clearTimeout(technicalSheetResponseTimeout);
+        window.pageLoader.hideSearch();
+        if (!technicalSheetDialog.open) technicalSheetDialog.showModal();
+        if (!event.data.success || !event.data.record) {
+          technicalSheetStatus.textContent = event.data.message;
+          return;
+        }
+
+        renderTechnicalSheet(event.data.record);
+        technicalSheetStatus.textContent = "";
+        return;
+      }
+
+      if (isResponseFromFrame(event, searchFrame) &&
+          event.data &&
+          event.data.type === "consulta-search") {
+        window.clearTimeout(searchResponseTimeout);
+        setSearchPending(false);
+        searchStatus.textContent = event.data.message === "Ingresá un criterio y un texto para buscar." ||
+          event.data.message === "Sin visitas programadas para la fecha seleccionada" ||
+          (event.data.success && searchCriterion.value === "fechaProximaVisita" &&
+          Array.isArray(event.data.results) && !event.data.results.length)
+          ? "Sin visitas programadas." : event.data.message;
+        renderSearchResults(event.data.results);
+        return;
+      }
+
+      if (!isResponseFromFrame(event, frame) ||
+          !event.data ||
+          event.data.type !== "consulta-submit") {
+        return;
+      }
+
+      window.clearTimeout(responseTimeout);
+      trackingSaving = false;
+      confirmTrackingButton.disabled = false;
+      if (event.data.success) {
+        window.pageLoader.hideSearch();
+        const successDialog = document.getElementById("registration-success");
+        successDialog.addEventListener("close", function () {
+          window.location.href = "index.html";
+        }, { once: true });
+        successDialog.showModal();
+        window.setTimeout(function () { successDialog.close(); }, 2000);
+        return;
+      }
+      window.pageLoader.hideSearch();
+      submitButton.disabled = false;
+      trackingMenuButton.disabled = false;
+      status.textContent = event.data.message;
+    });
+  </script>
+  <script>
+    (function () {
+      const loader = document.getElementById("loader");
+      const content = document.querySelector("main");
+      const logo = loader.querySelector(".logo-base");
+      const fill = loader.querySelector(".logo-fill");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let finished = false;
+      let started = false;
+      let searchActive = false;
+      let fallback;
+      let hideTimeout;
+
+      function finishLoader() {
+        if (finished) return;
+        finished = true;
+        window.clearTimeout(fallback);
+        loader.classList.add("is-finished");
+        content.inert = false;
+        content.removeAttribute("aria-busy");
+        content.classList.add("fade-in");
+        hideTimeout = window.setTimeout(function () { loader.hidden = true; }, reducedMotion ? 0 : 400);
+      }
+
+      function startLoader() {
+        if (started || finished) return;
+        started = true;
+        if (!logo.naturalWidth) {
+          finishLoader();
+          return;
+        }
+        loader.classList.add("is-running");
+      }
+
+      window.pageLoader = {
+        showSearch: function (label) {
+          window.clearTimeout(fallback);
+          window.clearTimeout(hideTimeout);
+          searchActive = true;
+          finished = false;
+          started = true;
+          loader.classList.remove("is-finished", "is-running");
+          loader.setAttribute("aria-label", label || "Buscando coincidencias");
+          loader.hidden = false;
+          content.classList.remove("fade-in");
+          content.inert = true;
+          content.setAttribute("aria-busy", "true");
+          void loader.offsetWidth;
+          loader.classList.add("is-running", "is-searching");
+        },
+        hideSearch: function () {
+          if (!searchActive) return;
+          searchActive = false;
+          loader.classList.remove("is-searching");
+          finishLoader();
+        }
+      };
+
+      loader.hidden = false;
+      content.inert = true;
+      content.setAttribute("aria-busy", "true");
+      fill.addEventListener("animationend", function (event) {
+        if (!searchActive && event.target === fill && event.animationName === "llenar") finishLoader();
+      });
+      logo.addEventListener("load", startLoader, { once: true });
+      logo.addEventListener("error", finishLoader, { once: true });
+      fallback = window.setTimeout(finishLoader, 6000);
+      if (logo.complete) startLoader();
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted) {
+          searchActive = false;
+          finishLoader();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

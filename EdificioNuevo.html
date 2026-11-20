@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Edificio Nuevo</title>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/0yX4db3M/logo-movil.png">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: clamp(1rem, 5vw, 2rem);
+    }
+
+    main {
+      margin: 0 auto;
+      max-width: 42rem;
+      width: 100%;
+    }
+
+    .page-header {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo {
+      display: block;
+      height: auto;
+      margin-bottom: 27px;
+      max-width: 100%;
+      width: 132px;
+    }
+
+    .site-footer {
+      color: #bbb;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: auto;
+      padding-top: 28px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .site-footer a {
+      color: #ddd;
+      text-underline-offset: 3px;
+    }
+
+    .site-footer a:hover {
+      color: #fff;
+    }
+
+    .site-footer a:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
+
+    .legal-links {
+      margin: 0;
+    }
+
+    .legal-links span {
+      margin: 0 4px;
+    }
+
+    .copyright {
+      margin: 8px 0 0;
+    }
+
+    h1 {
+      color: #ccc;
+      font-size: 18px;
+      font-weight: 400;
+      margin: 0;
+      text-align: center;
+    }
+
+    form {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    #edit-load-form[hidden] {
+      display: none;
+    }
+
+    label {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    #observaciones-label[hidden],
+    #observaciones-edicion-label[hidden] {
+      display: none;
+    }
+
+    input,
+    select,
+    textarea {
+      background: #1d1d1d;
+      border: 1px solid #555;
+      border-radius: 0.5rem;
+      color: #f5f5f5;
+      font: inherit;
+      padding: 0.65rem;
+      width: 100%;
+    }
+
+    textarea {
+      min-height: 7rem;
+      resize: vertical;
+    }
+
+    .management-select {
+      background: #1d1d1d;
+      border: 1px solid #555;
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    .management-select summary {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      gap: 0.75rem;
+      list-style: none;
+      min-height: 3.2rem;
+      padding: 0.85rem 1rem;
+    }
+    .management-select summary::-webkit-details-marker { display: none; }
+    .management-select summary::after {
+      border-bottom: 2px solid #bbb;
+      border-right: 2px solid #bbb;
+      content: "";
+      height: 0.45rem;
+      margin-left: auto;
+      transform: rotate(45deg);
+      width: 0.45rem;
+      flex-shrink: 0;
+    }
+    .management-select[open] summary::after { transform: rotate(225deg); }
+    .management-select summary:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+    .management-select[open] { border-color: #888; }
+    .management-count {
+      background: #383838;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.55rem;
+      white-space: nowrap;
+    }
+    .management-hint { color: #aaa; font-size: 0.8rem; margin: 0; padding: 0.2rem 1rem 0.7rem; }
+    .management-options { display: grid; gap: 0.4rem; padding: 0 0.6rem 0.6rem; }
+    .management-options label {
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      font-size: 0.9rem;
+      gap: 0.7rem;
+      line-height: 1.4;
+      min-height: 2.75rem;
+      padding: 0.65rem;
+    }
+    .management-options label:hover { background: #292929; }
+    .management-options label:has(input:checked) { background: #29382e; border-color: #587d62; }
+    .management-options input[type="checkbox"] {
+      accent-color: #7fbd91;
+      width: 1.1rem;
+      height: 1.1rem;
+      margin: 0;
+      flex-shrink: 0;
+    }
+    .management-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .management-tags:empty { display: none; }
+    .management-tag {
+      background: #253129;
+      border: 1px solid #45634d;
+      border-radius: 0.5rem;
+      color: #d3e8d9;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+      padding: 0.35rem 0.6rem;
+    }
+
+    .sellers-feedback {
+      align-items: center;
+      color: #bbb;
+      display: flex;
+      font-size: 0.875rem;
+      gap: 0.6rem;
+    }
+
+    .sellers-feedback:has(.sellers-spinner[hidden]) #sellers-status:empty {
+      display: none;
+    }
+
+    .sellers-feedback:has(.sellers-spinner[hidden]):has(#sellers-status:empty) {
+      display: none;
+    }
+
+    #sellers-status {
+      margin: 0;
+    }
+
+    .sellers-spinner {
+      animation: sellers-spin 0.8s linear infinite;
+      border: 2px solid #444;
+      border-radius: 50%;
+      border-top-color: #f5f5f5;
+      flex: 0 0 auto;
+      height: 1.1rem;
+      width: 1.1rem;
+    }
+
+    .sellers-spinner[hidden] {
+      display: none;
+    }
+
+    @keyframes sellers-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .sellers-spinner { animation: none; }
+    }
+
+    fieldset {
+      border: 1px solid #444;
+      border-radius: 0.75rem;
+      display: grid;
+      gap: 1rem;
+      min-width: 0;
+      padding: 1rem;
+    }
+
+    fieldset[hidden] {
+      display: none;
+    }
+
+    #building-details-fields {
+      border: 0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .contact-fields {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contact-card {
+      margin: 0;
+    }
+
+    .number-fields {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .competition-fields {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #company-field[hidden],
+    #competition-promotion-field[hidden] {
+      display: none;
+    }
+
+    #competition-promotion-field {
+      grid-column: 1 / -1;
+    }
+
+    #acronimo-texto-field[hidden] {
+      display: none;
+    }
+
+    #acronimo-texto-field {
+      grid-column: 1 / -1;
+      text-align: center;
+      width: 100%;
+    }
+
+    #edit-acronimo-texto {
+      text-align: center;
+    }
+
+    #acronimo-texto-hint {
+      color: #bbb;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .edit-location-fields {
+      align-items: start;
+    }
+
+    #cableado-details {
+      display: grid;
+      gap: 1rem;
+    }
+
+    #cableado-details[hidden] {
+      display: none;
+    }
+
+    input[type="date"] {
+      color-scheme: dark;
+    }
+
+    .visit-date-field { display: flex; position: relative; }
+    .visit-date-field > input[type="text"] { min-width: 0; border-radius: 0.5rem 0 0 0.5rem; }
+    #edit-visit-calendar { flex: 0 0 3rem; border-radius: 0 0.5rem 0.5rem 0; padding: 0.5rem; }
+    #edit-visit-date-picker {
+      position: absolute; right: 0; bottom: 0; width: 1px; height: 1px;
+      padding: 0; border: 0; opacity: 0; pointer-events: none;
+    }
+
+    select.has-selection {
+      background: #d72d32;
+      border-color: #d72d32;
+      color: #fff;
+    }
+
+    button,
+    .button {
+      background: #d72d32;
+      border: 0;
+      border-radius: 0.875rem;
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      min-height: 4rem;
+      padding: 1rem;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    button:hover,
+    .button:hover {
+      background: #e13a3f;
+    }
+
+    button.save-changes {
+      background: #218739;
+    }
+
+    button.save-changes:hover {
+      background: #279c43;
+    }
+
+    #menu-button {
+      background: #666;
+    }
+
+    #menu-button:hover {
+      background: #777;
+    }
+
+    #clear-form {
+      background: #1769c2;
+    }
+
+    #clear-form:hover {
+      background: #207bdc;
+    }
+
+    #add-contact,
+    #save-building-button {
+      margin-top: -0.5rem;
+      min-height: 3.25rem;
+      padding-bottom: 0.5rem;
+      padding-top: 0.5rem;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.65;
+    }
+
+    .actions,
+    .dialog-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    #save-building-button {
+      width: 100%;
+    }
+
+    #menu-button,
+    #clear-form {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      min-height: 3.25rem;
+      padding: 0.5rem 1rem;
+    }
+
+    .secondary-actions {
+      display: grid;
+      flex: 1 1 100%;
+      gap: 0.75rem;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+    }
+
+    .secondary-actions > [hidden] {
+      display: none;
+    }
+
+    .address-map-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 3.5rem;
+      align-items: start;
+      gap: 0.75rem;
+    }
+
+    #open-map {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3rem;
+      padding: 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    #status {
+      min-height: 1.5em;
+    }
+
+    dialog {
+      background: #191919;
+      border: 0;
+      border-radius: 0.875rem;
+      box-shadow: 0 0.5rem 2rem #0009;
+      color: #f5f5f5;
+      max-height: calc(100vh - 2rem);
+      max-height: calc(100dvh - 2rem);
+      max-width: 38rem;
+      overflow: auto;
+      padding: 1.5rem;
+      width: min(38rem, calc(100vw - 2rem));
+    }
+
+    dialog::backdrop {
+      background: #0008;
+    }
+
+    dialog h2 {
+      color: #ddd;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 0 0 1rem;
+      text-align: center;
+    }
+
+    #confirmation-dialog {
+      border: 1px solid #414141;
+      border-top: 4px solid #d72d32;
+      max-width: 50rem;
+      width: min(50rem, calc(100vw - 2rem));
+    }
+    #confirmation-title {
+      color: #bbb;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-align: left;
+      text-transform: uppercase;
+    }
+    #record-summary { display: grid; gap: 1rem; overflow-wrap: anywhere; }
+    .sheet-heading { border-bottom: 1px solid #444; padding-bottom: 1.25rem; }
+    .sheet-heading h3 { font-size: 1.6rem; margin: 0 0 0.5rem; }
+    .sheet-heading p { color: #bbb; margin: 0; line-height: 1.5; }
+    .sheet-section { background: #202020; border: 1px solid #363636; border-radius: 0.75rem; padding: 1rem; }
+    .sheet-section h3 { font-size: 1rem; margin: 0 0 1rem; }
+    .sheet-section dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.5rem; margin: 0; }
+    .sheet-section dt { color: #aaa; font-size: 0.75rem; margin-bottom: 0.35rem; }
+    .sheet-section dd { margin: 0; line-height: 1.5; white-space: pre-line; }
+    .sheet-section .sheet-full { grid-column: 1 / -1; }
+    .sheet-section.sheet-general dl { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .sheet-stat { grid-column: span 2; }
+    .sheet-stat dd { font-size: 1.25rem; font-weight: bold; }
+    #dialog-status:empty { display: none; }
+    .dialog-actions { position: sticky; bottom: -1.5rem; background: #191919; border-top: 1px solid #363636; margin-top: 1.25rem; padding: 1rem 0; }
+    .dialog-actions > button { flex: 1; }
+    #edit-record { background: #d72d32; }
+    #edit-record:hover { background: #e13a3f; }
+    @media (max-width: 40rem) {
+      .sheet-section dl { grid-template-columns: minmax(0, 1fr); }
+      .dialog-actions { bottom: -1rem; }
+    }
+
+    #registration-success {
+      transform: scale(0.75);
+      background: #176b35;
+      border: 1px solid #55b879;
+      color: #fff;
+      max-width: 24rem;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+    #registration-success h2 { color: #fff; font-size: 1.5rem; margin: 1rem 0 0; }
+    #registration-success svg { display: block; margin: 0 auto; }
+
+    .summary {
+      display: grid;
+      gap: 0.25rem 0.4rem;
+      grid-template-columns: minmax(7rem, 0.8fr) minmax(0, 1.2fr);
+      overflow-wrap: anywhere;
+    }
+
+    .summary dt {
+      background: #252525;
+      border-left: 3px solid #d72d32;
+      border-radius: 0.4rem 0 0 0.4rem;
+      color: #c9c9c9;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 0.55rem 0.6rem;
+    }
+
+    .summary dd {
+      background: #252525;
+      border-radius: 0 0.4rem 0.4rem 0;
+      font-size: 0.85rem;
+      line-height: 1.35;
+      margin: 0;
+      min-width: 0;
+      padding: 0.55rem 0.6rem;
+      white-space: pre-line;
+    }
+
+    #dialog-status {
+      color: #ddd;
+      font-size: 0.8rem;
+      min-height: 1.2em;
+    }
+
+    .dialog-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dialog-actions > button {
+      font-size: 0.82rem;
+      line-height: 1.2;
+      min-height: 3rem;
+      padding: 0.6rem 0.45rem;
+    }
+
+    .hint {
+      color: #bbb;
+      margin: 0;
+    }
+
+    @media (max-width: 40rem) {
+      body {
+        padding:
+          max(1rem, env(safe-area-inset-top))
+          max(1rem, env(safe-area-inset-right))
+          max(1.5rem, env(safe-area-inset-bottom))
+          max(1rem, env(safe-area-inset-left));
+      }
+
+      .competition-fields {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-fields {
+        grid-template-columns: 1fr;
+      }
+
+      .actions > button,
+      .dialog-actions > .button {
+        flex: 1 1 100%;
+      }
+
+      dialog {
+        max-height: calc(100vh - 2rem);
+        max-height: calc(100dvh - 2rem);
+        padding: 1rem;
+      }
+
+      .summary {
+        grid-template-columns: minmax(6rem, 0.8fr) minmax(0, 1.2fr);
+      }
+
+      .summary dd {
+        margin-bottom: 0;
+      }
+    }
+    @media (max-width: 600px) {
+      .logo {
+        margin-bottom: 24px;
+        width: min(32vw, 120px);
+      }
+    }
+    /* Loader de entrada */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity .4s ease;
+    }
+
+    #loader[hidden] { display: none; }
+    #loader.is-finished { opacity: 0; pointer-events: none; }
+
+    .logo-loader {
+      position: relative;
+      width: min(180px, 60vw);
+      aspect-ratio: 1;
+    }
+
+    .logo-base,
+    .logo-fill img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-base { filter: grayscale(100%) brightness(0.5); }
+
+    .logo-fill {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      clip-path: inset(100% 0 0 0);
+    }
+
+    .logo-fill::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+      transform: translateX(-100%) rotate(25deg);
+    }
+
+    #loader.is-running .logo-fill {
+      animation: llenar 2.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
+
+    #loader.is-running .logo-fill::after {
+      animation: brillo 2.2s ease-in-out forwards;
+    }
+
+    #loader.is-saving .logo-fill,
+    #loader.is-saving .logo-fill::after {
+      animation-iteration-count: infinite;
+    }
+    @keyframes llenar {
+      from { clip-path: inset(100% 0 0 0); }
+      to { clip-path: inset(0 0 0 0); }
+    }
+
+    @keyframes brillo {
+      from { transform: translateX(-100%) rotate(25deg); }
+      to { transform: translateX(100%) rotate(25deg); }
+    }
+
+    .fade-in { animation: fadeIn .4s ease-in-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #loader { transition: none; }
+      #loader.is-running .logo-fill { animation-duration: .01s; }
+      #loader.is-running .logo-fill::after, .fade-in { animation: none; }
+      #loader.is-saving .logo-fill { animation: none; clip-path: inset(0); }
+    }
+  </style>
+</head>
+<body>
+  <div id="loader" role="status" aria-label="Cargando pantalla" hidden>
+    <div class="logo-loader" aria-hidden="true">
+      <img src="https://i.postimg.cc/prB8Q5s6/logo-claro.png" class="logo-base" alt="">
+      <div class="logo-fill">
+        <img src="https://i.postimg.cc/prB8Q5s6/logo-claro.png" alt="">
+      </div>
+    </div>
+  </div>
+  <main>
+    <header class="page-header">
+      <img src="https://i.postimg.cc/prB8Q5s6/logo-claro.png" class="logo" alt="Claro">
+      <h1 id="page-title">Edificio Nuevo</h1>
+    </header>
+
+    <form id="building-form" method="post" target="submit-frame">
+      <input id="form-action" name="action" type="hidden">
+      <input id="edit-building-id" name="idEdificio" type="hidden">
+
+      <fieldset id="building-details-fields">
+        <label for="vendedor">Vendedor</label>
+        <select id="vendedor" name="vendedor" aria-describedby="sellers-status" required disabled>
+          <option value="">Cargando vendedores...</option>
+        </select>
+        <div class="sellers-feedback">
+          <span id="sellers-spinner" class="sellers-spinner" aria-hidden="true" hidden></span>
+          <p id="sellers-status" role="status" aria-live="polite"></p>
+        </div>
+        <button id="retry-sellers" type="button" hidden>Reintentar cargar vendedores</button>
+
+        <label for="nombre-edificio">Nombre Edificio</label>
+        <input id="nombre-edificio" name="nombreEdificio" type="text" required>
+
+        <label for="tipo-proyecto">Tipo de Proyecto</label>
+        <select id="tipo-proyecto" name="tipoProyecto" required>
+          <option value="">Seleccionar tipo de proyecto</option>
+          <option value="Edificio premium pendiente de acometimiento">Edificio premium pendiente de acometimiento</option>
+          <option value="Edificio sin acometer">Edificio sin acometer</option>
+          <option value="Edificio acometido con puertos libres">Edificio acometido con puertos libres</option>
+          <option value="Edificio pequeño sin administración">Edificio pequeño sin administración</option>
+          <option value="Edificio nuevo/ en construcción">Edificio nuevo/ en construcción</option>
+          <option value="Proyecto especial">Proyecto especial</option>
+          <option value="Barrio privado">Barrio privado</option>
+          <option value="Country">Country</option>
+          <option value="Condominio">Condominio</option>
+        </select>
+
+        <label for="calle">Calle</label>
+        <input id="calle" name="calle" type="text" autocomplete="street-address" required>
+
+        <label for="altura">Altura</label>
+        <div class="address-map-row">
+          <input id="altura" name="altura" type="number" min="0" step="1" inputmode="numeric" placeholder="0" required>
+          <button id="open-map" type="button" aria-label="Abrir Google Maps" title="Abrir Google Maps"><svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></button>
+        </div>
+
+          <input id="google-maps" name="googleMaps" type="hidden">
+        <label for="coordenadas">Coordenadas</label>
+        <input id="coordenadas" name="coordenadas" type="text" placeholder="-34.6037, -58.3816" autocomplete="off" aria-describedby="coordinates-hint">
+        <p id="coordinates-hint" class="hint">Copia las coordenadas (latitud, longitud) de Google Maps</p>
+
+        <label for="torres">Torres</label>
+        <input id="torres" name="torres" type="number" min="0" step="1" value="0" required>
+
+        <div class="number-fields">
+          <label for="pisos">
+            <span>Pisos</span>
+            <input id="pisos" name="pisos" type="number" min="0" step="1" value="0" required>
+          </label>
+          <label for="deptos">
+            <span>Deptos</span>
+            <input id="deptos" name="deptos" type="number" min="0" step="1" value="0" required>
+          </label>
+        </div>
+
+        <div id="contacts" aria-label="Contactos"></div>
+        <button id="add-contact" type="button" aria-label="Agregar contacto">+ Agregar contacto</button>
+        <input id="administrador" name="administrador" type="hidden">
+        <input id="cargo" name="cargo" type="hidden">
+        <input id="telefono" name="telefono" type="hidden">
+        <input id="correo" name="correo" type="hidden">
+
+        <div class="competition-fields">
+          <label for="presencia-competencia">
+            <span>¿Presencia de la competencia?</span>
+            <select id="presencia-competencia" name="presenciaCompetencia" required>
+              <option value="">Seleccionar</option>
+              <option value="Si">Si</option>
+              <option value="No">No</option>
+            </select>
+          </label>
+          <label id="company-field" for="empresa" hidden>
+            <span>Empresa</span>
+            <select id="empresa" name="empresa" disabled>
+              <option value="">Seleccionar empresa</option>
+              <option value="TIGO">TIGO</option>
+              <option value="PERSONAL">PERSONAL</option>
+              <option value="TIGO/PERSONAL">TIGO/PERSONAL</option>
+            </select>
+          </label>
+          <label id="competition-promotion-field" for="promocion-competencia" hidden>
+            <span>Promoción de la competencia</span>
+            <select id="promocion-competencia" name="promocionCompetencia" disabled>
+              <option value="">Seleccionar promoción</option>
+              <option value="Sin bonificación">Sin bonificación</option>
+              <option value="200 MB por 100.000 guaranies mensuales">200 MB por 100.000 guaranies mensuales</option>
+              <option value="200 MB por 110.000 guaranies mensuales">200 MB por 110.000 guaranies mensuales</option>
+              <option value="Sin especificar">Sin especificar</option>
+            </select>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset id="edit-tracking-fields" hidden disabled>
+        <legend id="edit-building-name">Edificio</legend>
+        <label for="edit-cableado">¿Está cableado?</label>
+        <select id="edit-cableado" name="cableado" required>
+          <option value="">Seleccionar</option>
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+
+        <label for="edit-punto-bonificado">¿Es Punto Bonificado?</label>
+        <select id="edit-punto-bonificado" name="puntoBonificado" required>
+          <option value="">Seleccionar</option>
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+
+        <span id="management-label">¿Qué gestión se realizó?</span>
+        <details id="management-select" class="management-select">
+          <summary aria-labelledby="management-label management-summary management-count">
+            <span id="management-summary">Seleccionar gestiones</span>
+            <span id="management-count" class="management-count">0 seleccionadas</span>
+          </summary>
+          <p class="management-hint">Podés marcar más de una opción.</p>
+          <div class="management-options" role="group" aria-labelledby="management-label">
+            <label><input type="checkbox" value="Relevamiento inicial">Relevamiento inicial</label>
+            <label><input type="checkbox" value="Se habló con encargado/ administración">Se habló con encargado/ administración</label>
+            <label><input type="checkbox" value="Se dejó información comercial">Se dejó información comercial</label>
+            <label><input type="checkbox" value="Se verificó infraestructura">Se verificó infraestructura</label>
+            <label><input type="checkbox" value="Se verificó competencia">Se verificó competencia</label>
+            <label><input type="checkbox" value="Se coordinó próxima reunión">Se coordinó próxima reunión</label>
+            <label><input type="checkbox" value="No se pudo contactar a nadie">No se pudo contactar a nadie</label>
+            <label><input type="checkbox" value="Se solicitó datos de contacto">Se solicitó datos de contacto</label>
+          </div>
+        </details>
+        <div id="management-tags" class="management-tags" aria-live="polite"></div>
+        <input id="edit-gestion-realizada" name="gestionRealizada" type="hidden">
+
+        <div id="cableado-details" hidden>
+          <label for="edit-piso-caja">
+            <span>¿En qué piso está la caja?</span>
+            <input id="edit-piso-caja" name="pisoCaja" type="number" step="1" inputmode="numeric" placeholder="0" disabled>
+          </label>
+          <div class="number-fields edit-location-fields">
+            <label for="edit-acronimo">
+              <span>Acrónimo</span>
+              <select id="edit-acronimo" name="acronimo" disabled>
+                <option value="Sin Verificar">Sin Verificar</option>
+                <option value="Si">Si</option>
+              </select>
+            </label>
+            <label for="edit-puertos-libres">
+              <span>Puertos Libres</span>
+              <input id="edit-puertos-libres" name="puertosLibres" type="number" min="0" step="1" inputmode="numeric" placeholder="0" disabled>
+            </label>
+            <label id="acronimo-texto-field" for="edit-acronimo-texto" hidden>
+              <span>Acrónimo de la caja</span>
+              <input id="edit-acronimo-texto" name="acronimoTexto" type="text" maxlength="15" aria-describedby="acronimo-texto-hint" disabled>
+              <small id="acronimo-texto-hint">Coloca los "-" de separación</small>
+            </label>
+        </div>
+
+        </div>
+
+        <label for="edit-fecha-proxima-visita">Fecha de Próxima visita</label>
+        <div class="visit-date-field">
+          <input id="edit-fecha-proxima-visita" type="text" inputmode="numeric" placeholder="dd/mm/aaaa" autocomplete="off">
+          <button id="edit-visit-calendar" type="button" aria-label="Seleccionar fecha de próxima visita">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+              <path d="M16 3v4M8 3v4M3 11h18M8 15h2M14 15h2"></path>
+            </svg>
+          </button>
+          <input id="edit-visit-date-picker" name="fechaProximaVisita" type="date" tabindex="-1" aria-label="Calendario de próxima visita">
+        </div>
+      </fieldset>
+
+      <label id="observaciones-label" for="observaciones">Observaciones</label>
+      <textarea id="observaciones" name="observaciones"></textarea>
+      <label id="observaciones-edicion-label" for="observaciones-edicion" hidden>Observaciones</label>
+      <textarea id="observaciones-edicion" name="observacionesEdicion" hidden disabled></textarea>
+
+      <div class="actions">
+        <button id="save-building-button" class="save-changes" type="submit">Registrar Edificio Nuevo</button>
+        <div class="secondary-actions">
+          <a id="menu-button" class="button" href="index.html">Menu</a>
+          <button id="clear-form" type="reset">Borrar Formulario</button>
+        </div>
+      </div>
+      <p id="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <dialog id="confirmation-dialog" aria-labelledby="confirmation-title">
+      <h2 id="confirmation-title">Confirmar edificio nuevo</h2>
+      <div id="record-summary"></div>
+      <p id="dialog-status" role="status" aria-live="polite"></p>
+      <div class="dialog-actions">
+        <button id="confirm-submit" class="save-changes" type="button">Confirmar</button>
+        <button id="edit-record" type="button">Editar</button>
+      </div>
+    </dialog>
+
+    <dialog id="registration-success" aria-labelledby="registration-success-title">
+      <svg aria-hidden="true" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="m7 12 3 3 7-7"/></svg>
+      <h2 id="registration-success-title">Registro exitoso</h2>
+    </dialog>
+    <iframe name="submit-frame" title="Respuesta del envío" hidden></iframe>
+    <form id="edit-load-form" method="get" target="edit-load-frame" hidden>
+      <input type="hidden" name="action" value="obtenerEdificio">
+      <input id="edit-load-id" name="idEdificio" type="hidden">
+    </form>
+    <iframe name="edit-load-frame" title="Datos del edificio" hidden></iframe>
+    <iframe name="sellers-frame" title="Lista de vendedores" hidden></iframe>
+  </main>
+
+  <footer class="site-footer">
+    <p class="copyright">© MovilGroup 2026. Todos los derechos reservados.</p>
+  </footer>
+  <script>
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoJu17H-UPp-ZW_XcjPW1RT6vArcSJi5l5m60G6Hr_dQGjPT5OKSLIHu5hyFueTR5d/exec";
+    const form = document.getElementById("building-form");
+    const frame = document.querySelector('iframe[name="submit-frame"]');
+    const editLoadForm = document.getElementById("edit-load-form");
+    const editLoadIdInput = document.getElementById("edit-load-id");
+    const editLoadFrame = document.querySelector('iframe[name="edit-load-frame"]');
+    const dialog = document.getElementById("confirmation-dialog");
+    const summary = document.getElementById("record-summary");
+    const dialogStatus = document.getElementById("dialog-status");
+    const submitButton = document.getElementById("confirm-submit");
+    const saveButton = document.getElementById("save-building-button");
+    const formActionInput = document.getElementById("form-action");
+    const editBuildingIdInput = document.getElementById("edit-building-id");
+    const pageTitle = document.getElementById("page-title");
+    const confirmationTitle = document.getElementById("confirmation-title");
+    const clearFormButton = document.getElementById("clear-form");
+    const buildingDetailsFields = document.getElementById("building-details-fields");
+    const editTrackingFields = document.getElementById("edit-tracking-fields");
+    const editCableado = document.getElementById("edit-cableado");
+    const editPuntoBonificado = document.getElementById("edit-punto-bonificado");
+    const editPisoCaja = document.getElementById("edit-piso-caja");
+    const editPuertosLibres = document.getElementById("edit-puertos-libres");
+    const editAcronimo = document.getElementById("edit-acronimo");
+    const acronimoTextoField = document.getElementById("acronimo-texto-field");
+    const editAcronimoTexto = document.getElementById("edit-acronimo-texto");
+    const managementSelect = document.getElementById("management-select");
+    const managementInput = document.getElementById("edit-gestion-realizada");
+    const managementCheckboxes = Array.from(managementSelect.querySelectorAll('input[type="checkbox"]'));
+
+    function syncManagement() {
+      const selected = managementCheckboxes.filter(function (input) { return input.checked; })
+        .map(function (input) { return input.value; });
+      managementInput.value = selected.join("\n");
+      document.getElementById("management-summary").textContent = selected.length
+        ? "Gestiones realizadas" : "Seleccionar gestiones";
+      document.getElementById("management-count").textContent = selected.length +
+        (selected.length === 1 ? " seleccionada" : " seleccionadas");
+      const tags = document.getElementById("management-tags");
+      tags.replaceChildren();
+      selected.forEach(function (value) {
+        const tag = document.createElement("span");
+        tag.className = "management-tag";
+        tag.textContent = value;
+        tags.append(tag);
+      });
+    }
+
+    managementSelect.addEventListener("change", syncManagement);
+    const editFechaProximaVisita = document.getElementById("edit-fecha-proxima-visita");
+    const editVisitDatePicker = document.getElementById("edit-visit-date-picker");
+
+    function syncNextVisitDate() {
+      const text = editFechaProximaVisita.value.trim();
+      const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text);
+      const isoDate = match ? match[3] + "-" + match[2] + "-" + match[1] : "";
+      const date = new Date(isoDate + "T00:00:00Z");
+      const valid = Boolean(match) && Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === isoDate;
+      editVisitDatePicker.value = valid ? isoDate : "";
+      editFechaProximaVisita.setCustomValidity(text && !valid ? "Ingresá una fecha válida en formato dd/mm/aaaa." : "");
+    }
+
+    editFechaProximaVisita.addEventListener("input", function () {
+      const cursorDigits = editFechaProximaVisita.value.slice(0, editFechaProximaVisita.selectionStart).replace(/\D/g, "").length;
+      const digits = editFechaProximaVisita.value.replace(/\D/g, "").slice(0, 8);
+      editFechaProximaVisita.value = digits.slice(0, 2) + (digits.length > 2 ? "/" + digits.slice(2, 4) : "") +
+        (digits.length > 4 ? "/" + digits.slice(4) : "");
+      const cursor = Math.min(editFechaProximaVisita.value.length, cursorDigits + (cursorDigits > 2 ? 1 : 0) + (cursorDigits > 4 ? 1 : 0));
+      editFechaProximaVisita.setSelectionRange(cursor, cursor);
+      syncNextVisitDate();
+    });
+    document.getElementById("edit-visit-calendar").addEventListener("click", function () {
+      syncNextVisitDate();
+      if (typeof editVisitDatePicker.showPicker === "function") {
+        editVisitDatePicker.showPicker();
+      } else {
+        editVisitDatePicker.focus();
+        editVisitDatePicker.click();
+      }
+    });
+    editVisitDatePicker.addEventListener("change", function () {
+      editFechaProximaVisita.value = editVisitDatePicker.value.split("-").reverse().join("/");
+      syncNextVisitDate();
+      editFechaProximaVisita.focus();
+    });
+    const observationsLabel = document.getElementById("observaciones-label");
+    const observationsInput = document.getElementById("observaciones");
+    const editObservationsLabel = document.getElementById("observaciones-edicion-label");
+    const editObservationsInput = document.getElementById("observaciones-edicion");
+    const status = document.getElementById("status");
+    const googleMapsInput = document.getElementById("google-maps");
+    const coordinatesInput = document.getElementById("coordenadas");
+    const contactsContainer = document.getElementById("contacts");
+    const contactFields = ["administrador", "cargo", "telefono", "correo"];
+    let responseTimeout;
+    let editLoadResponseTimeout;
+    let isEditMode = false;
+    let preserveStatusAfterReset = false;
+
+    function isResponseFromFrame(event, targetFrame) {
+      let source = event.source;
+      while (source && source !== targetFrame.contentWindow) {
+        const parent = source.parent;
+        if (parent === source) {
+          return false;
+        }
+        source = parent;
+      }
+      return source === targetFrame.contentWindow;
+    }
+
+    function parseCoordinates(value) {
+      const text = value.trim();
+      if (!text) {
+        return null;
+      }
+
+      const matches = [
+        text.match(/^([+-]?\d+(?:\.\d+)?)\s*,\s*([+-]?\d+(?:\.\d+)?)$/),
+        text.match(/@([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)/),
+        text.match(/!3d([+-]?\d+(?:\.\d+)?)!4d([+-]?\d+(?:\.\d+)?)/i),
+        text.match(/[?&](?:q|query|ll)=([+-]?\d+(?:\.\d+)?)(?:,|%2c)([+-]?\d+(?:\.\d+)?)/i)
+      ];
+      const match = matches.find(Boolean);
+      if (!match) {
+        return null;
+      }
+
+      const latitude = Number(match[1]);
+      const longitude = Number(match[2]);
+      if (!Number.isFinite(latitude) ||
+          !Number.isFinite(longitude) ||
+          latitude < -90 ||
+          latitude > 90 ||
+          longitude < -180 ||
+          longitude > 180) {
+        return null;
+      }
+
+      return { latitude: latitude, longitude: longitude };
+    }
+
+    function getMapUrl() {
+      const coordinates = parseCoordinates(coordinatesInput.value);
+      const query = coordinates
+        ? coordinates.latitude + "," + coordinates.longitude
+        : [document.getElementById("calle").value, document.getElementById("altura").value]
+          .filter(Boolean)
+          .join(" ");
+
+      return query
+        ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query)
+        : "";
+    }
+
+    function updateMapUrl() {
+      googleMapsInput.value = getMapUrl();
+    }
+
+    function validateCoordinates() {
+      const message = coordinatesInput.value.trim() && !parseCoordinates(coordinatesInput.value)
+        ? "Pegá coordenadas válidas como latitud, longitud."
+        : "";
+
+      coordinatesInput.setCustomValidity(message);
+    }
+
+    function updateEditTrackingFields() {
+      [editCableado, editPuntoBonificado, editAcronimo].forEach(function (select) {
+        select.classList.toggle("has-selection", Boolean(select.value));
+      });
+      const hasCableado = editCableado.value === "Si";
+      document.getElementById("cableado-details").hidden = !hasCableado;
+      editAcronimo.disabled = !hasCableado;
+      editPisoCaja.disabled = !hasCableado;
+      editPisoCaja.required = hasCableado;
+      editPuertosLibres.disabled = !hasCableado;
+      editPuertosLibres.required = hasCableado;
+      if (!hasCableado) {
+        editPisoCaja.value = "";
+        editPuertosLibres.value = "";
+        editAcronimo.value = "Sin Verificar";
+      }
+      const hasAcronimo = hasCableado && editAcronimo.value === "Si";
+      acronimoTextoField.hidden = !hasAcronimo;
+      editAcronimoTexto.disabled = !hasAcronimo;
+      editAcronimoTexto.required = hasAcronimo;
+      if (!hasAcronimo) editAcronimoTexto.value = "";
+    }
+
+    function addSummaryRow(label, value) {
+      const term = document.createElement("dt");
+      const description = document.createElement("dd");
+      term.textContent = label;
+      description.textContent = value || "—";
+      summary.querySelector(".summary").append(term, description);
+    }
+
+    function createContactCard(index) {
+      const card = document.createElement("fieldset");
+      card.className = "contact-card";
+      const legend = document.createElement("legend");
+      legend.textContent = "Contacto " + index;
+      card.append(legend);
+
+      const fields = document.createElement("div");
+      fields.className = "contact-fields";
+      [
+        { name: "administrador", label: "Nombre y Apellido", type: "text" },
+        { name: "cargo", label: "Cargo", type: "select" },
+        { name: "telefono", label: "Telefono", type: "tel" },
+        { name: "correo", label: "Correo", type: "email" }
+      ].forEach(function (field) {
+        const id = "contact-" + index + "-" + field.name;
+        const label = document.createElement("label");
+        label.htmlFor = id;
+        label.textContent = field.label;
+        let input;
+        if (field.type === "select") {
+          input = document.createElement("select");
+          [
+            ["", "Seleccionar cargo"],
+            ["Encargado", "Encargado"],
+            ["Portero", "Portero"],
+            ["Dueño", "Dueño"],
+            ["Administrador", "Administrador"],
+            ["Mantenimiento", "Mantenimiento"]
+          ].forEach(function (optionData) {
+            const option = document.createElement("option");
+            option.value = optionData[0];
+            option.textContent = optionData[1];
+            input.append(option);
+          });
+        } else {
+          input = document.createElement("input");
+          input.type = field.type;
+          if (field.name === "telefono") {
+            input.autocomplete = "tel";
+            input.inputMode = "tel";
+            input.pattern = "[+0-9\\s\\(\\)\\.\\-]*";
+            input.title = "Ingresá un número de teléfono.";
+          } else if (field.name === "correo") {
+            input.autocomplete = "email";
+          }
+        }
+        input.id = id;
+        input.dataset.contactField = field.name;
+        input.addEventListener("input", syncContacts);
+        input.addEventListener("change", syncContacts);
+        label.append(input);
+        fields.append(label);
+      });
+      card.append(fields);
+
+      if (index > 1) {
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.textContent = "Quitar contacto";
+        removeButton.addEventListener("click", function () {
+          card.remove();
+          renumberContacts();
+          syncContacts();
+          saveDraft();
+        });
+        card.append(removeButton);
+      }
+
+      contactsContainer.append(card);
+    }
+
+    function renumberContacts() {
+      Array.from(contactsContainer.querySelectorAll(".contact-card")).forEach(function (card, index) {
+        const contactNumber = index + 1;
+        card.querySelector("legend").textContent = "Contacto " + contactNumber;
+        card.querySelectorAll("[data-contact-field]").forEach(function (field) {
+          const fieldId = "contact-" + contactNumber + "-" + field.dataset.contactField;
+          field.id = fieldId;
+          field.closest("label").htmlFor = fieldId;
+        });
+      });
+    }
+
+    function syncContacts() {
+      const cards = Array.from(contactsContainer.querySelectorAll(".contact-card"));
+      contactFields.forEach(function (fieldName) {
+        const values = cards.map(function (card) {
+          const field = card.querySelector('[data-contact-field="' + fieldName + '"]');
+          return field.value.trim();
+        });
+        form.elements[fieldName].value = values.join("\n");
+      });
+      cards.forEach(function (card) {
+        const cargoSelect = card.querySelector('[data-contact-field="cargo"]');
+        cargoSelect.classList.toggle("has-selection", Boolean(cargoSelect.value));
+      });
+    }
+
+    function populateEditForm(building) {
+      const buildingName = building.nombreEdificio || building.nombre ||
+        new URLSearchParams(window.location.search).get("nombre");
+      document.getElementById("edit-building-name").textContent = buildingName || "Edificio";
+      editObservationsInput.value = building.observacionesEdicion || "";
+      editCableado.value = building.cableado || "";
+      editPuntoBonificado.value = building.puntoBonificado || "";
+      editPisoCaja.value = building.pisoCaja || "";
+      editPuertosLibres.value = building.puertosLibres || "";
+      editAcronimo.value = building.acronimo || "Sin Verificar";
+      editAcronimoTexto.value = building.acronimoTexto || "";
+      const selectedManagement = (building.gestionRealizada || "").split("\n");
+      managementCheckboxes.forEach(function (input) {
+        input.checked = selectedManagement.includes(input.value);
+      });
+      syncManagement();
+      const nextVisitDate = building.fechaProximaVisita || "";
+      editFechaProximaVisita.value = /^\d{4}-\d{2}-\d{2}$/.test(nextVisitDate)
+        ? nextVisitDate.split("-").reverse().join("/") : nextVisitDate;
+      syncNextVisitDate();
+      updateEditTrackingFields();
+    }
+
+    function loadEditRecord(buildingId) {
+      isEditMode = true;
+      const consultationLink = document.getElementById("menu-button");
+      consultationLink.textContent = "Consulta / Visita";
+      consultationLink.href = "Consulta.html";
+      window.pageLoader.showSaving("Cargando edificio");
+      document.getElementById("edit-building-name").textContent =
+        new URLSearchParams(window.location.search).get("nombre") || "Edificio";
+      document.title = "Editar Edificio";
+      pageTitle.textContent = "Editar Edificio";
+      confirmationTitle.textContent = "Confirmar cambios del edificio";
+      saveButton.textContent = "Guardar Cambios";
+      saveButton.classList.add("save-changes");
+      submitButton.textContent = "Confirmar Cambios";
+      submitButton.classList.add("save-changes");
+      document.getElementById("edit-record").textContent = "Editar";
+      clearFormButton.hidden = false;
+      buildingDetailsFields.hidden = true;
+      buildingDetailsFields.disabled = true;
+      editTrackingFields.hidden = true;
+      editTrackingFields.disabled = true;
+      observationsLabel.hidden = true;
+      observationsInput.hidden = true;
+      observationsInput.disabled = true;
+      observationsInput.value = "";
+      formActionInput.value = "editarEdificio";
+      editBuildingIdInput.value = buildingId;
+      saveButton.disabled = true;
+      status.textContent = "Cargando edificio...";
+
+      editLoadForm.action = GOOGLE_APPS_SCRIPT_URL;
+      editLoadIdInput.value = buildingId;
+      editLoadResponseTimeout = window.setTimeout(function () {
+        window.pageLoader.hideSaving();
+        status.textContent = "No llegó respuesta al cargar el edificio.";
+      }, 20000);
+      editLoadForm.submit();
+    }
+
+    function renderRegistrationSummary() {
+      const heading = document.createElement("header");
+      heading.className = "sheet-heading";
+      const name = document.createElement("h3");
+      name.textContent = form.elements.nombreEdificio.value;
+      const address = document.createElement("p");
+      address.textContent = [form.elements.calle.value, form.elements.altura.value].filter(Boolean).join(" ");
+      heading.append(name, address);
+      summary.append(heading);
+      const sections = [
+        ["Datos generales", [["Vendedor", "vendedor"], ["Tipo de Proyecto", "tipoProyecto"], ["Coordenadas", "coordenadas"], ["Torres", "torres"], ["Pisos", "pisos"], ["Deptos", "deptos"]]],
+        ["Contactos", [["Nombre y Apellido", "administrador"], ["Cargo", "cargo"], ["Telefono", "telefono"], ["Correo", "correo"]]],
+        ["Competencia", [["¿Presencia de la competencia?", "presenciaCompetencia"], ["Empresa", "empresa"], ["Promoción de la competencia", "promocionCompetencia"]]],
+        ["Observaciones", [["Detalle", "observaciones"]]]
+      ];
+      sections.forEach(function (data, index) {
+        const section = document.createElement("section");
+        section.className = "sheet-section" + (index === 0 ? " sheet-general" : "");
+        const title = document.createElement("h3");
+        title.textContent = data[0];
+        const details = document.createElement("dl");
+        data[1].forEach(function (field) {
+          const entry = document.createElement("div");
+          if (index === 0) entry.className = ["torres", "pisos", "deptos"].includes(field[1]) ? "sheet-stat" : "sheet-full";
+          const term = document.createElement("dt");
+          term.textContent = field[0];
+          const value = document.createElement("dd");
+          value.textContent = form.elements[field[1]].value || "—";
+          entry.append(term, value);
+          details.append(entry);
+        });
+        section.append(title, details);
+        summary.append(section);
+      });
+    }
+
+    function showSummary() {
+      summary.replaceChildren();
+      dialogStatus.textContent = "";
+      if (!isEditMode) {
+        renderRegistrationSummary();
+        dialog.showModal();
+        return;
+      }
+      const editSummary = document.createElement("dl");
+      editSummary.className = "summary";
+      summary.append(editSummary);
+      const fields = isEditMode
+        ? [
+            ["¿ESTÁ CABLEADO?", "cableado"],
+            ["¿ES PUNTO BONIFICADO?", "puntoBonificado"],
+            ["¿QUÉ GESTIÓN SE REALIZÓ?", "gestionRealizada"],
+            ["¿EN QUÉ PISO ESTÁ LA CAJA?", "pisoCaja"],
+            ["ACRÓNIMO", "acronimo"],
+            ["ACRÓNIMO DE LA CAJA", "acronimoTexto"],
+            ["PUERTOS LIBRES", "puertosLibres"],
+            ["FECHA DE PRÓXIMA VISITA", "fechaProximaVisita"],
+            ["OBSERVACIONES", "observacionesEdicion"]
+          ]
+        : [
+            ["VENDEDOR", "vendedor"],
+            ["NOMBRE EDIFICIO", "nombreEdificio"],
+            ["CALLE", "calle"],
+            ["ALTURA", "altura"],
+            ["COORDENADAS (LATITUD, LONGITUD)", "coordenadas"],
+            ["TORRES", "torres"],
+            ["PISOS", "pisos"],
+            ["DEPTOS", "deptos"],
+            ["ADMINISTRADOR", "administrador"],
+            ["CARGO", "cargo"],
+            ["TELEFONO", "telefono"],
+            ["CORREO", "correo"],
+            ["PRESENCIA DE COMPETENCIA", "presenciaCompetencia"],
+            ["EMPRESA", "empresa"],
+            ["OBSERVACIONES", "observaciones"]
+          ];
+
+      fields.forEach(function (field) {
+        addSummaryRow(field[0], field[1] === "fechaProximaVisita"
+          ? editFechaProximaVisita.value : form.elements[field[1]].value);
+      });
+      dialog.showModal();
+    }
+
+    document.getElementById("open-map").addEventListener("click", function () {
+      updateMapUrl();
+      if (!googleMapsInput.value) {
+        status.textContent = "Completá CALLE y ALTURA para abrir Google Maps.";
+        return;
+      }
+
+      window.open(googleMapsInput.value, "_blank", "noopener,noreferrer");
+    });
+
+    document.getElementById("add-contact").addEventListener("click", function () {
+      createContactCard(contactsContainer.querySelectorAll(".contact-card").length + 1);
+      saveDraft();
+    });
+    createContactCard(1);
+
+    ["calle", "altura"].forEach(function (id) {
+      document.getElementById(id).addEventListener("input", updateMapUrl);
+    });
+    coordinatesInput.addEventListener("input", function () {
+      validateCoordinates();
+      updateMapUrl();
+    });
+
+    const presenceSelect = document.getElementById("presencia-competencia");
+    const companySelect = document.getElementById("empresa");
+    const companyField = document.getElementById("company-field");
+    const promotionField = document.getElementById("competition-promotion-field");
+    const promotionSelect = document.getElementById("promocion-competencia");
+    const projectTypeSelect = document.getElementById("tipo-proyecto");
+    const sellerSelect = document.getElementById("vendedor");
+    const sellersFrame = document.querySelector('iframe[name="sellers-frame"]');
+    const sellersStatus = document.getElementById("sellers-status");
+    const sellersSpinner = document.getElementById("sellers-spinner");
+    const retrySellersButton = document.getElementById("retry-sellers");
+    let sellersResponseTimeout;
+    let sellersReady = false;
+    let sellersLoading = false;
+
+    function showSellersError(message) {
+      window.pageLoader.hideSaving();
+      sellersLoading = false;
+      sellersReady = false;
+      sellersSpinner.hidden = true;
+      sellerSelect.setAttribute("aria-busy", "false");
+      sellerSelect.disabled = true;
+      sellerSelect.replaceChildren(new Option("Vendedores no disponibles", ""));
+      sellersStatus.textContent = message;
+      retrySellersButton.hidden = false;
+      updateSellerStyle();
+    }
+
+    function loadSellers() {
+      window.pageLoader.showSaving("Cargando vendedores");
+      window.clearTimeout(sellersResponseTimeout);
+      sellersReady = false;
+      sellersLoading = true;
+      sellersSpinner.hidden = false;
+      sellerSelect.setAttribute("aria-busy", "true");
+      sellerSelect.disabled = true;
+      sellerSelect.replaceChildren(new Option("Cargando vendedores...", ""));
+      sellersStatus.textContent = "Cargando vendedores desde la planilla...";
+      retrySellersButton.hidden = true;
+      updateSellerStyle();
+      sellersResponseTimeout = window.setTimeout(function () {
+        showSellersError("No llegó respuesta al cargar los vendedores. Intentá nuevamente.");
+      }, 20000);
+      sellersFrame.src = GOOGLE_APPS_SCRIPT_URL + "?action=obtenerVendedores&t=" + Date.now();
+    }
+
+    retrySellersButton.addEventListener("click", loadSellers);
+
+    function updateSellerStyle() {
+      sellerSelect.classList.toggle("has-selection", Boolean(sellerSelect.value));
+      projectTypeSelect.classList.toggle("has-selection", Boolean(projectTypeSelect.value));
+    }
+
+    sellerSelect.addEventListener("change", updateSellerStyle);
+    projectTypeSelect.addEventListener("change", updateSellerStyle);
+    updateSellerStyle();
+
+    function updateCompanyField() {
+      const hasCompetition = presenceSelect.value === "Si";
+      presenceSelect.classList.toggle("has-selection", Boolean(presenceSelect.value));
+      companyField.hidden = !hasCompetition;
+      companySelect.disabled = !hasCompetition;
+      companySelect.required = hasCompetition;
+      if (!hasCompetition) {
+        companySelect.value = "";
+      }
+      companySelect.classList.toggle("has-selection", Boolean(companySelect.value));
+      const hasCompany = hasCompetition && Boolean(companySelect.value);
+      promotionField.hidden = !hasCompany;
+      promotionSelect.disabled = !hasCompany;
+      promotionSelect.required = hasCompany;
+      if (!hasCompany) promotionSelect.value = "";
+      promotionSelect.classList.toggle("has-selection", Boolean(promotionSelect.value));
+    }
+
+    presenceSelect.addEventListener("change", updateCompanyField);
+    companySelect.addEventListener("change", updateCompanyField);
+    promotionSelect.addEventListener("change", updateCompanyField);
+    updateCompanyField();
+    editCableado.addEventListener("change", updateEditTrackingFields);
+    editPuntoBonificado.addEventListener("change", updateEditTrackingFields);
+    editAcronimo.addEventListener("change", updateEditTrackingFields);
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (!isEditMode && !sellersReady) {
+        sellersStatus.textContent = "Esperá a que carguen los vendedores o reintentá la carga.";
+        return;
+      }
+      validateCoordinates();
+      syncContacts();
+      syncManagement();
+      if (isEditMode) syncNextVisitDate();
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      updateMapUrl();
+      showSummary();
+    });
+
+    document.getElementById("edit-record").addEventListener("click", function () {
+      dialog.close();
+      (isEditMode ? editCableado : document.getElementById("vendedor")).focus();
+    });
+
+    document.getElementById("confirm-submit").addEventListener("click", function () {
+      if (!/^https:\/\/script\.google\.com\/macros\/s\/.+\/(exec|dev)$/.test(GOOGLE_APPS_SCRIPT_URL)) {
+        dialogStatus.textContent = "Falta configurar la URL del formulario de Google Apps Script.";
+        return;
+      }
+
+      submitButton.disabled = true;
+      saveButton.disabled = true;
+      window.pageLoader.showSaving(isEditMode ? "Guardando cambios" : "Guardando registro");
+      status.textContent = "Enviando datos...";
+      responseTimeout = window.setTimeout(function () {
+        submitButton.disabled = false;
+        saveButton.disabled = false;
+        window.pageLoader.hideSaving();
+        status.textContent = "No llegó confirmación. El registro podría haberse guardado; revisá la planilla antes de reintentar.";
+      }, 20000);
+      dialog.close();
+      form.action = GOOGLE_APPS_SCRIPT_URL;
+      form.submit();
+    });
+
+    form.addEventListener("reset", function () {
+      editFechaProximaVisita.setCustomValidity("");
+      clearDraft();
+      const preserveStatus = preserveStatusAfterReset;
+      preserveStatusAfterReset = false;
+      window.setTimeout(function () {
+        if (!preserveStatus) {
+          status.textContent = "";
+        }
+        contactsContainer.replaceChildren();
+        createContactCard(1);
+        syncContacts();
+        syncManagement();
+        managementSelect.open = false;
+        updateMapUrl();
+        validateCoordinates();
+        updateSellerStyle();
+        updateCompanyField();
+        if (isEditMode) updateEditTrackingFields();
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      });
+    });
+
+    window.addEventListener("message", function (event) {
+      if (isResponseFromFrame(event, sellersFrame)) {
+        if (!sellersLoading) return;
+        window.clearTimeout(sellersResponseTimeout);
+        const data = event.data;
+        const sellers = data && Array.isArray(data.results)
+          ? Array.from(new Set(data.results.filter(function (seller) {
+              return typeof seller === "string" && seller.trim();
+            }).map(function (seller) { return seller.trim(); })))
+          : [];
+        if (!data || data.type !== "edificio-sellers" || !data.success || !sellers.length) {
+          showSellersError(data && typeof data.message === "string"
+            ? data.message : "No se pudieron cargar los vendedores. Intentá nuevamente.");
+          return;
+        }
+        sellerSelect.replaceChildren(new Option("Seleccionar vendedor", ""));
+        sellers.forEach(function (seller) {
+          sellerSelect.append(new Option(seller, seller));
+        });
+        sellerSelect.disabled = false;
+        if (draftSeller) sellerSelect.value = draftSeller;
+        sellersLoading = false;
+        sellersReady = true;
+        window.pageLoader.hideSaving();
+        sellersSpinner.hidden = true;
+        sellerSelect.setAttribute("aria-busy", "false");
+        sellersStatus.textContent = "";
+        retrySellersButton.hidden = true;
+        updateSellerStyle();
+        return;
+      }
+      if (isResponseFromFrame(event, editLoadFrame)) {
+        window.clearTimeout(editLoadResponseTimeout);
+        window.pageLoader.hideSaving();
+        if (!event.data || event.data.type !== "edificio-edit-load") {
+          saveButton.disabled = true;
+          status.textContent = event.data && event.data.message
+            ? event.data.message
+            : "El Apps Script respondió con un tipo de respuesta inesperado.";
+          return;
+        }
+
+        if (!event.data.success || !event.data.record) {
+          saveButton.disabled = true;
+          status.textContent = event.data.message;
+          return;
+        }
+
+        populateEditForm(event.data.record);
+        restoreDraft();
+        draftReady = true;
+        editTrackingFields.hidden = false;
+        editTrackingFields.disabled = false;
+        updateEditTrackingFields();
+        editObservationsLabel.hidden = false;
+        editObservationsInput.hidden = false;
+        editObservationsInput.disabled = false;
+        saveButton.disabled = false;
+        status.textContent = "";
+        return;
+      }
+
+      if (!isResponseFromFrame(event, frame) ||
+          !event.data ||
+          event.data.type !== "edificio-nuevo-submit") {
+        return;
+      }
+
+      window.clearTimeout(responseTimeout);
+      saveButton.disabled = false;
+      window.pageLoader.hideSaving();
+      submitButton.disabled = false;
+      status.textContent = event.data.message;
+
+      if (event.data.success) {
+        clearDraft();
+        draftReady = false;
+        saveButton.disabled = true;
+        submitButton.disabled = true;
+        const successDialog = document.getElementById("registration-success");
+        successDialog.addEventListener("close", function () {
+          window.location.href = isEditMode ? "Consulta.html" : "index.html";
+        }, { once: true });
+        successDialog.showModal();
+        window.setTimeout(function () { successDialog.close(); }, 2000);
+      }
+    });
+
+    const editBuildingId = new URLSearchParams(window.location.search).get("editar");
+
+    const draftKey = editBuildingId ? "edificio-form-draft-v2:" + editBuildingId : "edificio-form-draft-v1:nuevo";
+    let draftReady = !editBuildingId;
+    let draftDirty = false;
+    let draftSeller = "";
+
+    function clearDraft() {
+      draftDirty = false;
+      draftSeller = "";
+      try { localStorage.removeItem(draftKey); } catch (error) { console.error(error); }
+    }
+
+    function saveDraft() {
+      if (!draftReady) return;
+      syncContacts();
+      syncManagement();
+      const fields = {};
+      form.querySelectorAll('input[name]:not([type="hidden"]), select[name], textarea[name]').forEach(function (field) {
+        fields[field.name] = field.value;
+      });
+      if (!editBuildingId && !sellersReady && draftSeller) fields.vendedor = draftSeller;
+      const contacts = Array.from(contactsContainer.querySelectorAll(".contact-card")).map(function (card) {
+        const contact = {};
+        card.querySelectorAll("[data-contact-field]").forEach(function (field) {
+          contact[field.dataset.contactField] = field.value;
+        });
+        return contact;
+      });
+      try {
+        localStorage.setItem(draftKey, JSON.stringify({ fields: fields, contacts: contacts, management: managementInput.value }));
+        draftDirty = true;
+      } catch (error) { console.error(error); }
+    }
+
+    function restoreDraft() {
+      try {
+        const draft = JSON.parse(localStorage.getItem(draftKey) || "null");
+        if (!draft || !draft.fields || !Array.isArray(draft.contacts)) return;
+        form.querySelectorAll('input[name]:not([type="hidden"]), select[name], textarea[name]').forEach(function (field) {
+          if (typeof draft.fields[field.name] === "string") field.value = draft.fields[field.name];
+        });
+        draftSeller = typeof draft.fields.vendedor === "string" ? draft.fields.vendedor : "";
+        contactsContainer.replaceChildren();
+        (draft.contacts.length ? draft.contacts : [{}]).forEach(function (contact, index) {
+          createContactCard(index + 1);
+          const card = contactsContainer.lastElementChild;
+          card.querySelectorAll("[data-contact-field]").forEach(function (field) {
+            const value = contact[field.dataset.contactField];
+            if (typeof value === "string") field.value = value;
+          });
+        });
+        const management = typeof draft.management === "string" ? draft.management.split("\n") : [];
+        managementCheckboxes.forEach(function (field) { field.checked = management.includes(field.value); });
+        syncContacts();
+        syncManagement();
+        updateCompanyField();
+        updateSellerStyle();
+        if (editBuildingId) updateEditTrackingFields();
+        updateMapUrl();
+        validateCoordinates();
+        draftDirty = true;
+      } catch (error) { console.error(error); }
+    }
+
+    form.addEventListener("input", saveDraft);
+    form.addEventListener("change", saveDraft);
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden" && draftDirty) saveDraft();
+    });
+    window.addEventListener("pagehide", function () {
+      if (draftDirty) saveDraft();
+    });
+
+    if (!editBuildingId) {
+      restoreDraft();
+    }
+    validateCoordinates();
+  </script>
+  <script>
+    (function () {
+      const loader = document.getElementById("loader");
+      const content = document.querySelector("main");
+      const logo = loader.querySelector(".logo-base");
+      const fill = loader.querySelector(".logo-fill");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let finished = false;
+      let started = false;
+      let savingActive = false;
+      let fallback;
+      let hideTimeout;
+
+      function finishLoader() {
+        if (finished) return;
+        finished = true;
+        window.clearTimeout(fallback);
+        loader.classList.add("is-finished");
+        content.inert = false;
+        content.removeAttribute("aria-busy");
+        content.classList.add("fade-in");
+        hideTimeout = window.setTimeout(function () { loader.hidden = true; }, reducedMotion ? 0 : 400);
+      }
+
+      function startLoader() {
+        if (started || finished) return;
+        started = true;
+        if (!logo.naturalWidth) {
+          finishLoader();
+          return;
+        }
+        loader.classList.add("is-running");
+      }
+
+      window.pageLoader = {
+        showSaving: function (label) {
+          window.clearTimeout(fallback);
+          window.clearTimeout(hideTimeout);
+          savingActive = true;
+          finished = false;
+          started = true;
+          loader.classList.remove("is-finished", "is-running");
+          loader.setAttribute("aria-label", label || "Guardando cambios");
+          loader.hidden = false;
+          content.classList.remove("fade-in");
+          content.inert = true;
+          content.setAttribute("aria-busy", "true");
+          void loader.offsetWidth;
+          loader.classList.add("is-running", "is-saving");
+        },
+        hideSaving: function () {
+          if (!savingActive) return;
+          savingActive = false;
+          loader.classList.remove("is-saving");
+          finishLoader();
+        }
+      };
+
+      loader.hidden = false;
+      content.inert = true;
+      content.setAttribute("aria-busy", "true");
+      fill.addEventListener("animationend", function (event) {
+        if (!savingActive && event.target === fill && event.animationName === "llenar") finishLoader();
+      });
+      logo.addEventListener("load", startLoader, { once: true });
+      logo.addEventListener("error", function () {
+        if (!savingActive) finishLoader();
+      }, { once: true });
+      fallback = window.setTimeout(finishLoader, 6000);
+      if (logo.complete) startLoader();
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted) {
+          if (sellersLoading) {
+            window.pageLoader.showSaving("Cargando vendedores");
+            return;
+          }
+          savingActive = false;
+          finishLoader();
+        }
+      });
+      if (editBuildingId) loadEditRecord(editBuildingId);
+      else loadSellers();
+    })();
+  </script>
+</body>
+</html>
